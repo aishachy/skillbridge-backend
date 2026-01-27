@@ -1,0 +1,40 @@
+import { Request, Response } from "express";
+import { Bookings } from "../../../generated/prisma";
+import { prisma } from "../../lib/prisma";
+
+const createBookings = async (data: Bookings) => {
+    const result = await prisma.bookings.create({
+        data
+    })
+    return result
+}
+
+const getAllBookings = async (data: Bookings) => {
+    const result = await prisma.bookings.findMany({
+        include: {
+            student: true,
+            tutor: true,
+            category: true
+        }
+    })
+    return result
+}
+
+const getBookingById = async (id: number) => {
+    const result = await prisma.bookings.findUnique({
+        where: { id },
+        include: {
+            student: true,
+            tutor: true,
+            category: true
+        }
+    })
+
+    return result
+}
+
+export const bookingsService = {
+    createBookings,
+    getAllBookings,
+    getBookingById
+}

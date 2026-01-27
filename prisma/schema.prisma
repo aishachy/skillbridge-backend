@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
@@ -14,14 +14,14 @@ datasource db {
 }
 
 model Users {
-  id            Int             @id @default(autoincrement())
+  id            Int            @id @default(autoincrement())
   name          String
-  email         String          @unique
+  email         String         @unique
   password      String?
-  role          ROLE @default(STUDENT)
+  role          ROLE           @default(STUDENT)
   phone         String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   tutorProfiles TutorProfiles?
   bookings      Bookings[]
   reviews       Reviews[]
@@ -37,22 +37,24 @@ model TutorProfiles {
   location    String?
   rating      Float?   @default(0)
   isActive    Boolean  @default(true)
+  isFeatured  Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  userId   Int        @unique
-  user     Users     @relation(fields: [userId], references: [id])
-  reviews  Reviews[]
-  category Categories[]
-  bookings Bookings[]
+  userId              Int                 @unique
+  user                Users               @relation(fields: [userId], references: [id])
+  reviews             Reviews[]
+  category            Categories[]
+  bookings            Bookings[]
+  tutorAvailabilities TutorAvailability[]
 }
 
 model Categories {
-  id          Int        @id @default(autoincrement())
-  subjectName String     @unique
+  id          Int     @id @default(autoincrement())
+  subjectName String  @unique
   description String?
 
-  tutors TutorProfiles[]
+  tutors   TutorProfiles[]
   bookings Bookings[]
 }
 
@@ -63,12 +65,12 @@ model Bookings {
   categoryId Int
   startTime  DateTime
   endTime    DateTime
-  status     STATUS @default(PENDING)
+  status     STATUS   @default(PENDING)
   price      Float?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  student Users       @relation(fields: [studentId], references: [id])
+  student  Users         @relation(fields: [studentId], references: [id])
   tutor    TutorProfiles @relation(fields: [tutorId], references: [id])
   category Categories    @relation(fields: [categoryId], references: [id])
 }
@@ -82,8 +84,16 @@ model Reviews {
   comment   String?
   createdAt DateTime @default(now())
 
-  student Users    @relation(fields: [studentId], references: [id])
+  student Users         @relation(fields: [studentId], references: [id])
   tutor   TutorProfiles @relation(fields: [tutorId], references: [id])
+}
+
+model TutorAvailability {
+  id        Int           @id @default(autoincrement())
+  tutorId   Int
+  startTime DateTime
+  endTime   DateTime
+  tutor     TutorProfiles @relation(fields: [tutorId], references: [id])
 }
 
 enum ROLE {
