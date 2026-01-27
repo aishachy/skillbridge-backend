@@ -1,0 +1,100 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Users {
+  id            Int             @id @default(autoincrement())
+  name          String
+  email         String          @unique
+  password      String?
+  role          ROLE @default(STUDENT)
+  phone         String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  tutorProfiles TutorProfiles?
+  bookings      Bookings[]
+  reviews       Reviews[]
+}
+
+model TutorProfiles {
+  id          Int      @id @default(autoincrement())
+  name        String
+  bio         String?
+  education   String?
+  experience  String?
+  perHourRate String?
+  location    String?
+  rating      Float?   @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId   Int        @unique
+  user     Users     @relation(fields: [userId], references: [id])
+  reviews  Reviews[]
+  category Categories[]
+  bookings Bookings[]
+}
+
+model Categories {
+  id          Int        @id @default(autoincrement())
+  subjectName String     @unique
+  description String?
+
+  tutors TutorProfiles[]
+  bookings Bookings[]
+}
+
+model Bookings {
+  id         Int      @id @default(autoincrement())
+  studentId  Int
+  tutorId    Int
+  categoryId Int
+  startTime  DateTime
+  endTime    DateTime
+  status     STATUS @default(PENDING)
+  price      Float?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  student Users       @relation(fields: [studentId], references: [id])
+  tutor    TutorProfiles @relation(fields: [tutorId], references: [id])
+  category Categories    @relation(fields: [categoryId], references: [id])
+}
+
+model Reviews {
+  id        Int      @id @default(autoincrement())
+  studentId Int
+  tutorId   Int
+  bookingId Int
+  rating    String
+  comment   String?
+  createdAt DateTime @default(now())
+
+  student Users    @relation(fields: [studentId], references: [id])
+  tutor   TutorProfiles @relation(fields: [tutorId], references: [id])
+}
+
+enum ROLE {
+  STUDENT
+  TUTOR
+  ADMIN
+}
+
+enum STATUS {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
