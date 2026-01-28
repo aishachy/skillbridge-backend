@@ -1,15 +1,15 @@
-import { Users } from "../../../generated/prisma/client";
+import { User } from "../../../generated/prisma";
 import { prisma } from "../../lib/prisma";
 
-const createStudent = async (data: Users) => {
-    const result = await prisma.users.create({
+const createStudent = async (data: User) => {
+    const result = await prisma.user.create({
         data,
     })
     return result;
 }
 
-const getAllStudent = async (data: Users) => {
-    const result = await prisma.users.findMany({    
+const getAllStudent = async (data: User) => {
+    const result = await prisma.user.findMany({    
     //     where: {
     //   role: "STUDENT",
     // },
