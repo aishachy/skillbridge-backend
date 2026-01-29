@@ -89,6 +89,28 @@ const updateTutorProfile = async (req: Request, res: Response) => {
     }
 };
 
+const getStats = async (req: Request, res: Response) => {
+  try {
+        const tutorId = req.user?.id;
+        if (!tutorId) {
+            return res.status(401).json({ 
+                success: false, 
+                message: "Unauthorized"
+             });
+        }
+
+    const stats = await tutorService.getStats(tutorId)
+
+    res.status(200).json({ success: true, data: stats });
+  } catch (e) {
+    const errorMessage = (e instanceof Error) ? e.message : "Stats fetched failed!"
+    res.status(400).json({
+      error: errorMessage,
+      details: e
+    })
+  }
+}
+
 
 
 export const tutorController = {
@@ -96,5 +118,6 @@ export const tutorController = {
     getAllTutors,
     getTutorById,
     updateTutor,
-    updateTutorProfile
+    updateTutorProfile,
+    getStats
 }

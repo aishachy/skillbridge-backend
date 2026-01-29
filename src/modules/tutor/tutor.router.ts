@@ -4,11 +4,13 @@ import auth from "../../middleware/auth";
 
 const router = express.Router();
 
-router.post('/tutor', tutorController.createTutors)
-
 router.get('/tutor', tutorController.getAllTutors)
 
 router.get('/tutor/:id', tutorController.getTutorById)
+
+router.get('/tutor/dashboard', auth("TUTOR"), tutorController.getStats)
+
+router.post('/tutor', tutorController.createTutors)
 
 router.put('/tutor/profile/:id', tutorController.updateTutor)
 

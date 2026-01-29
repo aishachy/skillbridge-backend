@@ -65,10 +65,62 @@ const updateTutorProfile = async (data: updateProfileInput, tutorId: number) => 
   return result
 }
 
+const getStats = async (tutorId: number) => {
+  const totalBookings = await prisma.bookings.count({
+    where: {
+      tutorId
+    }
+  });
+
+  const completedSessions = await prisma.bookings.count({
+    where: { tutorId, status: "COMPLETED" }
+  });
+
+  const totalEarningResult = await prisma.bookings.aggregate({
+    where: { tutorId, status: "COMPLETED" },
+    _sum: { price: true }
+  });
+  const totalEarnings = totalEarningResult._sum.price ?? 0;
+
+  const upcomingSessions = await prisma.bookings.findMany({
+    where: {
+      tutorId,
+      status: "CONFIRMED"
+    },
+    include: {
+      student: { select: { name: true, email: true } },
+      category: { select: { subjectName: true } }
+    },
+    orderBy: { startTime: "asc" }
+  });
+
+  const pastSessions = await prisma.bookings.findMany({
+    where: {
+      tutorId,
+      status: "COMPLETED"
+    },
+    include: {
+      student: { select: { name: true, email: true } },
+      category: { select: { subjectName: true } }
+    },
+    orderBy: { startTime: "asc" }
+  });
+
+  return {
+    totalBookings,
+    completedSessions,
+    totalEarnings,
+    upcomingSessions,
+    pastSessions
+  }
+}
+
+
 export const tutorService = {
   createTutor,
   getAllTutors,
   getTutorById,
   updateTutor,
-  updateTutorProfile
+  updateTutorProfile,
+  getStats
 }
