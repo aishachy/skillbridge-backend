@@ -8,6 +8,8 @@ const router = express.Router();
 
 router.post('/users', UserController.createUser)
 
+router.get('/', auth("ADMIN"), UserController.getStats)
+
 router.get('/users', auth("ADMIN"), UserController.getAllUser)
 
 router.get('/users/:id', auth("ADMIN"), UserController.getUserById)

@@ -94,7 +94,7 @@ const getStats = async (studentId: number) => {
     const pastSessions = await prisma.bookings.findMany({
         where: {
              studentId, 
-             status: "COMPLETED"
+             status: "CONFIRMED"
         },
         include: {
             tutor: { select: { name: true } },

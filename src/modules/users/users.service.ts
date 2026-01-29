@@ -55,21 +55,58 @@ const updateUser = async (data: Users, userId: number) => {
     return result
 }
 
- const deleteUser = async (userId: number) => {
-    const user = await prisma.users.findUnique({ 
-        where: { 
-            id: userId 
+const deleteUser = async (userId: number) => {
+    const user = await prisma.users.findUnique({
+        where: {
+            id: userId
         }
-     });
+    });
     if (!user) throw new Error("User not found");
 
     const result = prisma.users.delete({
-         where: { 
-            id: userId 
-        } 
+        where: {
+            id: userId
+        }
     });
-    return {result, message: "User deleted successfully" };
+    return { result, message: "User deleted successfully" };
 };
+
+const getStats = async (userId: number) => {
+    const totalUsers = await prisma.users.count();
+    const totalStudents = await prisma.users.count({ where: { role: "STUDENT" } });
+    const totalTutors = await prisma.users.count({ where: { role: "TUTOR" } });
+
+    const totalBookings = await prisma.bookings.count();
+    const completedSessions = await prisma.bookings.count({ where: { status: "COMPLETED" } });
+
+    const revenueResult = await prisma.bookings.aggregate({
+        where: { status: "COMPLETED" },
+        _sum: { price: true }
+    });
+    const totalRevenue = revenueResult._sum.price ?? 0;
+
+    const activeTutors = await prisma.tutorProfiles.count({ where: { isActive: true } });
+
+    const recentBookings = await prisma.bookings.findMany({
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        include: {
+            student: { select: { name: true } },
+            tutor: { select: { name: true } },
+            category: { select: { subjectName: true } }
+        }
+    });
+    return {
+        totalUsers,
+        totalStudents,
+        totalTutors,
+        totalBookings,
+        completedSessions,
+        totalRevenue,
+        activeTutors,
+        recentBookings
+    }
+}
 
 
 export const userService = {
@@ -77,5 +114,6 @@ export const userService = {
     getAllUser,
     getUserById,
     updateUser,
-    deleteUser
+    deleteUser,
+    getStats
 }
