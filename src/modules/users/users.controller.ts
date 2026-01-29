@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { studentService } from "./student.service";
+import { userService } from "./users.service";
 
-const createStudent = async (req:Request, res:Response) => {
+const createUser = async (req:Request, res:Response) => {
     try{
-        const result = await studentService.createStudent(req.body)
+        const result = await userService.createUser(req.body)
         res.status(201).json(result)
     }catch(e){
         res.status(400).json({
@@ -13,9 +13,9 @@ const createStudent = async (req:Request, res:Response) => {
     }
 }
 
-const getAllStudent = async (req:Request, res:Response) => {
+const getAllUser = async (req:Request, res:Response) => {
     try{
-        const result = await studentService.getAllStudent(req.body)
+        const result = await userService.getAllUser(req.body)
         res.status(201).json(result)
     }catch(e){
         res.status(400).json({
@@ -25,7 +25,7 @@ const getAllStudent = async (req:Request, res:Response) => {
     }
 }
 
-export const studentController = {
-    createStudent,
-    getAllStudent
+export const UserController = {
+    createUser,
+    getAllUser
 }

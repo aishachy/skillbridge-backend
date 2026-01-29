@@ -2,22 +2,27 @@ import { TutorProfiles } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
 const createTutor = async (data: TutorProfiles) => {
-   const result = await prisma.tutorProfiles.create({
-      data
-   })
-   return result;
+  const result = await prisma.tutorProfiles.create({
+    data
+  })
+  return result;
 }
 
 const getAllTutors = async (data: TutorProfiles) => {
-   const result = await prisma.tutorProfiles.findMany({
+  const result = await prisma.tutorProfiles.findMany({
+    where: {
+      user: {
+        role: "TUTOR"
+      }
+    },
      include: {
       user: true,
       reviews: true,
       bookings: true,
       category: true
     }
-   })
-   return result;
+  })
+  return result;
 }
 
 const getTutorById = async (id: number) => {
@@ -44,8 +49,8 @@ const updateTutor = async (data: TutorProfiles, tutorId: number) => {
 }
 
 export const tutorService = {
-   createTutor,
-   getAllTutors,
-   getTutorById,
-   updateTutor
+  createTutor,
+  getAllTutors,
+  getTutorById,
+  updateTutor
 }
