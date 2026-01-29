@@ -7,6 +7,7 @@ interface RegisterInput {
     name: string;
     email: string;
     password: string;
+    role?: "STUDENT" | "TUTOR";
 }
 
 interface LoginInput {
@@ -29,6 +30,7 @@ const registerUser = async (data: RegisterInput) => {
         data: {
             ...data,
             password: hashedPassword,
+            role: data.role ?? "STUDENT"
         },
     });
 
@@ -53,7 +55,7 @@ const loginUser = async (data: LoginInput) => {
     const user = await prisma.users.findUnique({
         where: { email: data.email }
     })
-    
+
     if (!user) {
         throw new Error("Invalid Credentials")
     }

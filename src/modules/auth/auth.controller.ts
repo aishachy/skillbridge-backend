@@ -15,7 +15,8 @@ const loginUser = async (req: Request, res: Response) => {
 
 const registerUser = async (req: Request, res: Response) => {
     try {
-        const result = await authService.registerUser(req.body)
+        const {name, email, password, role} = req.body 
+        const result = await authService.registerUser({name, email, password, role})
         res.status(201).json(result)
     } catch (e) {
         res.status(400).json({
