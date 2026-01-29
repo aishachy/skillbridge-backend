@@ -1,9 +1,10 @@
 import express from "express"
 import { tutorAvailabilityController } from "./tutorAvailability.controller"
+import auth from "../../middleware/auth"
 
 const router = express.Router()
 
-router.post('/tutor/availability', tutorAvailabilityController.createTutorAvailability)
+router.post('/tutor/availability', auth("TUTOR"), tutorAvailabilityController.createTutorAvailability)
 
 router.put('/tutor/availability/:id', tutorAvailabilityController.updateAvailability)
 

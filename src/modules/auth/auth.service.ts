@@ -35,6 +35,7 @@ const registerUser = async (data: RegisterInput) => {
     const secret = process.env.JWT_SECRET!;
     const token = jwt.sign(
         {
+            id: user.id,
             name: user.name,
             email: user.email,
             role: user.role,
@@ -52,7 +53,7 @@ const loginUser = async (data: LoginInput) => {
     const user = await prisma.users.findUnique({
         where: { email: data.email }
     })
-
+    
     if (!user) {
         throw new Error("Invalid Credentials")
     }
@@ -63,7 +64,7 @@ const loginUser = async (data: LoginInput) => {
     }
 
     const secret = process.env.JWT_SECRET!;
-    const token = jwt.sign({ name: user.name, email: user.email, role: user.role }, secret, {
+    const token = jwt.sign({ id: user.id, email: user.email, role: user.role, name: user.name }, secret, {
         expiresIn: "7d"
     })
 
@@ -88,6 +89,7 @@ const currentUser = async (email: string) => {
 
     return user;
 };
+
 
 export const authService = {
     loginUser,

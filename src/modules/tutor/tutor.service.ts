@@ -15,7 +15,7 @@ const getAllTutors = async (data: TutorProfiles) => {
         role: "TUTOR"
       }
     },
-     include: {
+    include: {
       user: true,
       reviews: true,
       bookings: true,
@@ -48,9 +48,27 @@ const updateTutor = async (data: TutorProfiles, tutorId: number) => {
   return result
 }
 
+interface updateProfileInput {
+  name?: string
+  bio?: string
+  education?: string
+  experience?: string
+  perHourRate?: string
+  location?: string
+}
+
+const updateTutorProfile = async (data: updateProfileInput, tutorId: number) => {
+  const result = prisma.tutorProfiles.update({
+    where: { id: tutorId },
+    data
+  });
+  return result
+}
+
 export const tutorService = {
   createTutor,
   getAllTutors,
   getTutorById,
-  updateTutor
+  updateTutor,
+  updateTutorProfile
 }

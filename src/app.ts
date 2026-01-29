@@ -6,6 +6,7 @@ import { bookingRouter } from "./modules/bookings/bookings.router";
 import { tutorAvailabilityRouter } from "./modules/tutorAvailability/tutorAvailability.router";
 import { reviewsRouter } from "./modules/reviews/reviews.router";
 import { authRouter } from "./modules/auth/auth.router";
+import { studentRouter } from "./modules/student/student.router";
 
 const app = express();
 
@@ -24,6 +25,8 @@ app.use('/api', tutorAvailabilityRouter)
 app.use('/api', reviewsRouter)
 
 app.use('/api/auth', authRouter)
+
+app.use('/dashboard', studentRouter)
 
 app.get("/", (req,res) => {
     res.send("Hello world")

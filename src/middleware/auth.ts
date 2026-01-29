@@ -1,6 +1,11 @@
 import { NextFunction, Request, Response } from "express"
 import jwt, { JwtPayload } from "jsonwebtoken";
 
+interface userJwtPayload extends JwtPayload{
+    id: number,
+    role: string
+}
+
 const auth = (...roles: string[]) => {
     return (req: Request, res: Response, next: NextFunction) => {
         try {
@@ -12,9 +17,8 @@ const auth = (...roles: string[]) => {
             const decoded = jwt.verify(token!, process.env.JWT_SECRET as string) as JwtPayload
             req.user = decoded
             console.log("Decoded token:", decoded);
-            console.log("Auth header:", req.headers.authorization);
-            console.log("Decoded token:", decoded);
 
+            req.user = {id: decoded.id, role: decoded.role}
 
             if (roles.length && !roles.includes(decoded.role)) {
                 return res.status(401).json({

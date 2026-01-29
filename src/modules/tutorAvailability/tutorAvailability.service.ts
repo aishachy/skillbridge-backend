@@ -14,7 +14,16 @@ const createTutorAvailability = async (data: TutorAvailability) => {
     return result
 }
 
+interface AvailabilityInput {
+    startTime: Date | string;
+    endTime: Date | string;
+}
+
+
 const updateAvailability = async (slotId: number, data: TutorAvailability) => {
+    if (data.status !== "BOOKED" && data.bookingId !== null) {
+        throw new Error("bookingId allowed only when status is BOOKED");
+    }
     const result = await prisma.tutorAvailability.update({
         where: {
             id: slotId

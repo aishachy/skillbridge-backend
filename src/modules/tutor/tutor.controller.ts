@@ -64,10 +64,37 @@ const updateTutor = async (req: Request, res: Response) => {
     }
 }
 
+const updateTutorProfile = async (req: Request, res: Response) => {
+    try {
+        const tutorId = req.user?.id;
+        if (!tutorId) {
+            return res.status(401).json({ 
+                success: false, 
+                message: "Unauthorized"
+             });
+        }
+
+        const result = await tutorService.updateTutorProfile(req.body, tutorId);
+        res.status(200).json({
+            success: true,
+            message: "Tutor profile updated successfully",
+            data: result
+        });
+    } catch (err: any) {
+        res.status(500).json({
+            success: false,
+            message: "Profile update failed",
+            error: err.message
+        });
+    }
+};
+
+
 
 export const tutorController = {
     createTutors,
     getAllTutors,
     getTutorById,
-    updateTutor
+    updateTutor,
+    updateTutorProfile
 }
