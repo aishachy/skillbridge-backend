@@ -25,7 +25,58 @@ const getAllCategories = async (req: Request, res: Response) => {
     }
 }
 
+
+const getCategoriesById = async (req: Request, res: Response) => {
+    try {
+        const categoryId = Number(req.params.id);
+        const result = await categoryService.getCategoriesById(categoryId)
+        if (!result) {
+            return res.status(404).json({ error: "Category not found" });
+        }
+        res.status(200).json(result)
+    } catch (e) {
+        res.status(400).json({
+            error: "Category by id fetch failed",
+            details: e
+        })
+    }
+}
+
+
+const updateCategory = async (req: Request, res: Response) => {
+    try {
+        const categoryId = Number(req.params.id);
+
+        const result = await categoryService.updateCategory(req.body, categoryId)
+        res.status(200).json(result)
+    } catch (e) {
+        res.status(400).json({
+            error: "Category update failed",
+            details: e
+        })
+    }
+}
+
+const deleteCategory = async (req: Request, res: Response) => {
+    try {
+        const categoryId = Number(req.params.id);
+        const result = await categoryService.deleteCategory(categoryId)
+        res.status(200).json({
+            success: true,
+            message: result.message
+        });
+    } catch (err: any) {
+        res.status(404).json({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
 export const categoryController = {
     createCategory,
-    getAllCategories
+    getAllCategories,
+    getCategoriesById,
+    updateCategory,
+    deleteCategory
 }

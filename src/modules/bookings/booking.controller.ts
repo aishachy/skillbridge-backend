@@ -27,11 +27,7 @@ const getAllBookings = async (req: Request, res: Response) => {
 
 const getBookingById = async (req: Request, res: Response) => {
     try {
-        const id = req.params.id
-        if (!id || Array.isArray(id)) {
-            return res.status(400).json({ error: "Invalid booking ID" });
-        }
-        const bookingId = parseInt(id);
+        const bookingId = Number(req.params.id);
         const result = await bookingsService.getBookingById(bookingId)
 
         if (!result) {

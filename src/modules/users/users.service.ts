@@ -14,8 +14,6 @@ const createUser = async (data: Users) => {
         },
     })
     return user;
-    // const { password, ...safeUser } = user;
-    // return safeUser;
 }
 
 const getAllUser = async (data: Users) => {
@@ -29,6 +27,24 @@ const getAllUser = async (data: Users) => {
     return result;
 }
 
+const getUserById = async (userId: number) => {
+    const user = await prisma.users.findUnique({
+        where: { id: userId },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+    });
+
+    if (!user) throw new Error("User not found");
+    return user;
+};
+
+
 const updateUser = async (data: Users, userId: number) => {
     const result = await prisma.tutorProfiles.update({
         where: {
@@ -39,8 +55,27 @@ const updateUser = async (data: Users, userId: number) => {
     return result
 }
 
+ const deleteUser = async (userId: number) => {
+    const user = await prisma.users.findUnique({ 
+        where: { 
+            id: userId 
+        }
+     });
+    if (!user) throw new Error("User not found");
+
+    const result = prisma.users.delete({
+         where: { 
+            id: userId 
+        } 
+    });
+    return {result, message: "User deleted successfully" };
+};
+
+
 export const userService = {
     createUser,
     getAllUser,
-    updateUser
+    getUserById,
+    updateUser,
+    deleteUser
 }

@@ -27,11 +27,7 @@ const getAllTutors = async (req: Request, res: Response) => {
 
 const getTutorById = async (req: Request, res: Response) => {
     try {
-        const id = req.params.id
-        if (!id || Array.isArray(id)) {
-            return res.status(400).json({ error: "Invalid tutor ID" });
-        }
-        const tutorId = parseInt(id);
+        const tutorId = Number(req.params.id);
         const result = await tutorService.getTutorById(tutorId!)
 
         if (!result) {
@@ -48,11 +44,7 @@ const getTutorById = async (req: Request, res: Response) => {
 
 const updateTutor = async (req: Request, res: Response) => {
     try {
-        const id = req.params.id;
-        if (!id || Array.isArray(id)) {
-            return res.status(400).json({ error: "Invalid tutor ID" });
-        }
-        const tutorId = parseInt(id);
+        const tutorId = Number(req.params.id);
 
         const result = await tutorService.updateTutor(req.body, tutorId)
         res.status(200).json(result)
@@ -68,10 +60,10 @@ const updateTutorProfile = async (req: Request, res: Response) => {
     try {
         const tutorId = req.user?.id;
         if (!tutorId) {
-            return res.status(401).json({ 
-                success: false, 
+            return res.status(401).json({
+                success: false,
                 message: "Unauthorized"
-             });
+            });
         }
 
         const result = await tutorService.updateTutorProfile(req.body, tutorId);
@@ -90,25 +82,25 @@ const updateTutorProfile = async (req: Request, res: Response) => {
 };
 
 const getStats = async (req: Request, res: Response) => {
-  try {
+    try {
         const tutorId = req.user?.id;
         if (!tutorId) {
-            return res.status(401).json({ 
-                success: false, 
+            return res.status(401).json({
+                success: false,
                 message: "Unauthorized"
-             });
+            });
         }
 
-    const stats = await tutorService.getStats(tutorId)
+        const stats = await tutorService.getStats(tutorId)
 
-    res.status(200).json({ success: true, data: stats });
-  } catch (e) {
-    const errorMessage = (e instanceof Error) ? e.message : "Stats fetched failed!"
-    res.status(400).json({
-      error: errorMessage,
-      details: e
-    })
-  }
+        res.status(200).json({ success: true, data: stats });
+    } catch (e) {
+        const errorMessage = (e instanceof Error) ? e.message : "Stats fetched failed!"
+        res.status(400).json({
+            error: errorMessage,
+            details: e
+        })
+    }
 }
 
 

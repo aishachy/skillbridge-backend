@@ -25,15 +25,29 @@ const getAllUser = async (req: Request, res: Response) => {
     }
 }
 
+const getUserById = async (req: Request, res: Response) => {
+    try {
+        const userId = Number(req.params.id);
+        const result = await userService.getUserById(userId)
+
+        if (!result) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        res.status(200).json(result)
+    } catch (e) {
+        res.status(400).json({
+            error: "User by id fetch failed",
+            details: e
+        })
+    }
+}
+
+
 const updateUser = async (req: Request, res: Response) => {
     try {
-        const id = req.params.id;
-        if (!id || Array.isArray(id)) {
-            return res.status(400).json({ error: "Invalid user ID" });
-        }
-        const tutorId = parseInt(id);
+        const userId = Number(req.params.id);
 
-        const result = await userService.updateUser(req.body, tutorId)
+        const result = await userService.updateUser(req.body, userId)
         res.status(200).json(result)
     } catch (e) {
         res.status(400).json({
@@ -43,8 +57,24 @@ const updateUser = async (req: Request, res: Response) => {
     }
 }
 
+const deleteUser = async (req: Request, res: Response) => {
+    try {
+        const userId = Number(req.params.id);
+        const result = await userService.deleteUser(userId);
+        res.status(200).json({ 
+            success: true, 
+            message: result.message });
+    } catch (err: any) {
+        res.status(404).json({ 
+            success: false, 
+            message: err.message });
+    }
+};
+
 export const UserController = {
     createUser,
     getAllUser,
-    updateUser
+    getUserById,
+    updateUser,
+    deleteUser
 }

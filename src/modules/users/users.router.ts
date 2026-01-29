@@ -6,10 +6,14 @@ import auth from "../../middleware/auth";
 
 const router = express.Router();
 
-router.post('/', UserController.createUser)
+router.post('/users', UserController.createUser)
 
-router.get('/admin/users', auth("ADMIN"), UserController.getAllUser)
+router.get('/users', auth("ADMIN"), UserController.getAllUser)
 
-router.put('/admin/users/:id', auth("ADMIN"), UserController.updateUser)
+router.get('/users/:id', auth("ADMIN"), UserController.getUserById)
+
+router.put('/users/:id', auth("ADMIN"), UserController.updateUser)
+
+router.delete('/users/:id', auth("ADMIN"), UserController.deleteUser)
 
 export const userRouter = router

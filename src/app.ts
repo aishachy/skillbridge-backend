@@ -14,9 +14,9 @@ app.use(express.json())
 
 app.use('/api', tutorRouter);
 
-app.use('/api', userRouter)
+app.use('/admin', userRouter)
 
-app.use('/api', categoryRouter)
+app.use('/admin/categories', categoryRouter)
 
 app.use('/api', bookingRouter)
 
