@@ -17,7 +17,7 @@ const auth = (...roles: string[]) => {
 
 
             if (roles.length && !roles.includes(decoded.role)) {
-                return res.status(500).json({
+                return res.status(401).json({
                     error: "unauthorized"
                 })
             }

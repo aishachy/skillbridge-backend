@@ -3,12 +3,12 @@ import { tutorController } from "./tutor.controller";
 
 const router = express.Router();
 
-router.post('/tutors', tutorController.createTutors)
+router.post('/tutor', tutorController.createTutors)
 
-router.get('/tutors', tutorController.getAllTutors)
+router.get('/tutor', tutorController.getAllTutors)
 
-router.get('/tutors/:id', tutorController.getTutorById)
+router.get('/tutor/:id', tutorController.getTutorById)
 
-router.put('/tutors/profile/:id', tutorController.updateTutor)
+router.put('/tutor/profile/:id', tutorController.updateTutor)
 
 export const tutorRouter = router;

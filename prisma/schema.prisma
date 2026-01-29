@@ -70,9 +70,11 @@ model Bookings {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  student  Users         @relation(fields: [studentId], references: [id])
-  tutor    TutorProfiles @relation(fields: [tutorId], references: [id])
-  category Categories    @relation(fields: [categoryId], references: [id])
+  student             Users               @relation(fields: [studentId], references: [id])
+  tutor               TutorProfiles       @relation(fields: [tutorId], references: [id])
+  category            Categories          @relation(fields: [categoryId], references: [id])
+  reviews             Reviews?
+  tutorAvailabilities TutorAvailability[]
 }
 
 model Reviews {
@@ -86,14 +88,31 @@ model Reviews {
 
   student Users         @relation(fields: [studentId], references: [id])
   tutor   TutorProfiles @relation(fields: [tutorId], references: [id])
+  booking Bookings      @relation(fields: [bookingId], references: [id])
+
+  @@unique([bookingId])
 }
 
 model TutorAvailability {
-  id        Int           @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   tutorId   Int
   startTime DateTime
   endTime   DateTime
+  status AvailabilityStatus @default(AVAILABLE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   tutor     TutorProfiles @relation(fields: [tutorId], references: [id])
+  bookingId Int?
+  booking   Bookings?     @relation(fields: [bookingId], references: [id])
+
+  @@unique([tutorId, startTime, endTime])
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  BOOKED
+  BLOCKED
 }
 
 enum ROLE {

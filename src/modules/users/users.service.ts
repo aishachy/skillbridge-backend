@@ -29,7 +29,18 @@ const getAllUser = async (data: Users) => {
     return result;
 }
 
+const updateUser = async (data: Users, userId: number) => {
+    const result = await prisma.tutorProfiles.update({
+        where: {
+            id: userId
+        },
+        data
+    })
+    return result
+}
+
 export const userService = {
     createUser,
-    getAllUser
+    getAllUser,
+    updateUser
 }
