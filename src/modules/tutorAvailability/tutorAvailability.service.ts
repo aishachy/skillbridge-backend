@@ -7,6 +7,8 @@ const createTutorAvailability = async (data: TutorAvailability) => {
             tutorId: data.tutorId,
             startTime: new Date(data.startTime),
             endTime: new Date(data.endTime),
+            status: data.status,
+            bookingId: data.bookingId
         }
     })
     return result
@@ -20,6 +22,8 @@ const updateAvailability = async (slotId: number, data: TutorAvailability) => {
         data: {
             startTime: new Date(data.startTime),
             endTime: new Date(data.endTime),
+            status: data.status,
+            bookingId: data.bookingId
         }
     })
     return result
