@@ -20,6 +20,7 @@ model Users {
   password      String
   role          ROLE           @default(STUDENT)
   phone         String?
+  isBanned      Boolean        @default(false)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   tutorProfiles TutorProfiles?
@@ -54,8 +55,8 @@ model Categories {
   subjectName String  @unique
   description String?
 
-  tutors        TutorProfiles[] @relation("CategoriesToTutorProfiles")
-  bookings      Bookings[]
+  tutors   TutorProfiles[] @relation("CategoriesToTutorProfiles")
+  bookings Bookings[]
 }
 
 model Bookings {

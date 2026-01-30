@@ -108,6 +108,21 @@ const getStats = async (userId: number) => {
     }
 }
 
+const banUser = async (userId: number) => {
+    const result =  prisma.users.update({
+        where: { id: userId },
+        data: { isBanned: true },
+    });
+    return result
+};
+
+const unbanUser = async (userId: number) => {
+    const result = prisma.users.update({
+        where: { id: userId },
+        data: { isBanned: false },
+    });
+    return result
+};
 
 export const userService = {
     createUser,
@@ -115,5 +130,7 @@ export const userService = {
     getUserById,
     updateUser,
     deleteUser,
-    getStats
+    getStats,
+    banUser,
+    unbanUser
 }

@@ -61,34 +61,67 @@ const deleteUser = async (req: Request, res: Response) => {
     try {
         const userId = Number(req.params.id);
         const result = await userService.deleteUser(userId);
-        res.status(200).json({ 
-            success: true, 
-            message: result.message });
+        res.status(200).json({
+            success: true,
+            message: result.message
+        });
     } catch (err: any) {
-        res.status(404).json({ 
-            success: false, 
-            message: err.message });
+        res.status(404).json({
+            success: false,
+            message: err.message
+        });
     }
 };
 
 const getStats = async (req: Request, res: Response) => {
-  try {
-    const userId = req.user?.id; 
-    if (!userId)
-      return res.status(401).json({ success: false, message: "Unauthorized" });
+    try {
+        const userId = req.user?.id;
+        if (!userId)
+            return res.status(401).json({ success: false, message: "Unauthorized" });
 
-    const stats = await userService.getStats(userId)
+        const stats = await userService.getStats(userId)
 
-    res.status(200).json({ success: true, data: stats });
-  } catch (e) {
-    const errorMessage = (e instanceof Error) ? e.message : "Stats fetched failed!"
-    res.status(400).json({
-      error: errorMessage,
-      details: e
-    })
-  }
+        res.status(200).json({ success: true, data: stats });
+    } catch (e) {
+        const errorMessage = (e instanceof Error) ? e.message : "Stats fetched failed!"
+        res.status(400).json({
+            error: errorMessage,
+            details: e
+        })
+    }
 }
 
+const banUserController = async (req: Request, res: Response) => {
+    const userId = Number(req.params.id);
+    try {
+        const user = await userService.banUser(userId);
+        res.json({ 
+            success: true, 
+            message: "User banned successfully",
+            user });
+    } catch (err) {
+        res.status(400).json({ 
+            success: false,
+            message: "Error banning user", 
+            error: err });
+    }
+};
+
+const unbanUserController = async (req: Request, res: Response) => {
+    const userId = Number(req.params.id);
+    try {
+        const user = await userService.unbanUser(userId);
+        res.json({ 
+            success: true, 
+            message: "User unbanned successfully", 
+            user });
+    } catch (err) {
+        res.status(400).json({ 
+            success: false, 
+            message: "Error unbanning user", 
+            error: err });
+    }
+};
 
 export const UserController = {
     createUser,
@@ -96,5 +129,7 @@ export const UserController = {
     getUserById,
     updateUser,
     deleteUser,
-    getStats
+    getStats,
+    banUserController,
+    unbanUserController
 }

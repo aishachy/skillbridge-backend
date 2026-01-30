@@ -16,6 +16,10 @@ router.get('/users/:id', auth("ADMIN"), UserController.getUserById)
 
 router.put('/users/:id', auth("ADMIN"), UserController.updateUser)
 
+router.put('/users/ban/:id', auth("ADMIN"), UserController.banUserController)
+
+router.put('/users/unban/:id', auth("ADMIN"), UserController.unbanUserController)
+
 router.delete('/users/:id', auth("ADMIN"), UserController.deleteUser)
 
 export const userRouter = router
