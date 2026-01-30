@@ -13,42 +13,21 @@ const createTutor = async (data: TutorProfiles) => {
   return result;
 }
 
-const getAllTutors = async (payload: { search?: string | undefined }) => {
+const getAllTutors = async () => {
 
   const result = await prisma.tutorProfiles.findMany({
     where: {
       user: {
         role: "TUTOR",
-      }, OR: [
-        {
-          category: {
-            some: {
-              subjectName: {
-                contains: payload.search as string,
-                mode: "insensitive",
-              },
-            },
-          },
-        },
-        {
-          category: {
-            some: {
-              description: {
-                contains: payload.search as string,
-                mode: "insensitive",
-              },
-            },
-          },
-        },
-      ],
-    },
-    include: {
-      user: true,
+    } 
+  },
+      include: {
       reviews: true,
       bookings: true,
       category: true,
     }
-  });
+      }
+  );
 
   return result;
 };
