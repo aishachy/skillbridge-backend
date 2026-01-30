@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import { tutorService } from "./tutor.service"
 
+
 const createTutors = async (req: Request, res: Response) => {
     try {
         const result = await tutorService.createTutor(req.body)
@@ -15,12 +16,19 @@ const createTutors = async (req: Request, res: Response) => {
 
 const getAllTutors = async (req: Request, res: Response) => {
     try {
-        const result = await tutorService.getAllTutors(req.body)
-        res.status(201).json(result)
-    } catch (e) {
+        const { search } = req.query;
+        const searchString = typeof search === "string" ? search : undefined
+        const result = await tutorService.getAllTutors(search ? { search: searchString } : {})
+        res.status(200).json({
+            success: true,
+            data: result
+        })
+    } catch (error) {
+        console.error("error:", error);
         res.status(400).json({
+            success: false,
             error: "tutors fetch failed",
-            details: e
+            details: error
         })
     }
 }
@@ -45,8 +53,7 @@ const getTutorById = async (req: Request, res: Response) => {
 const updateTutor = async (req: Request, res: Response) => {
     try {
         const tutorId = Number(req.params.id);
-
-        const result = await tutorService.updateTutor(req.body, tutorId)
+        const result = await tutorService.updateTutor( tutorId)
         res.status(200).json(result)
     } catch (e) {
         res.status(400).json({

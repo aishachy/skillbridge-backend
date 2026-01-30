@@ -42,9 +42,8 @@ model TutorProfiles {
   updatedAt   DateTime @updatedAt
 
   userId              Int                 @unique
-  categoryId          Int                 @default(1)
   user                Users               @relation(fields: [userId], references: [id])
-  category            Categories          @relation(fields: [categoryId], references: [id])
+  category            Categories[]        @relation("CategoriesToTutorProfiles")
   reviews             Reviews[]
   bookings            Bookings[]
   tutorAvailabilities TutorAvailability[]
@@ -55,8 +54,8 @@ model Categories {
   subjectName String  @unique
   description String?
 
-  tutors   TutorProfiles[]
-  bookings Bookings[]
+  tutors        TutorProfiles[] @relation("CategoriesToTutorProfiles")
+  bookings      Bookings[]
 }
 
 model Bookings {

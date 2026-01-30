@@ -3,27 +3,56 @@ import { prisma } from "../../lib/prisma";
 
 const createTutor = async (data: TutorProfiles) => {
   const result = await prisma.tutorProfiles.create({
-    data
-  })
-  return result;
-}
-
-const getAllTutors = async (data: TutorProfiles) => {
-  const result = await prisma.tutorProfiles.findMany({
-    where: {
-      user: {
-        role: "TUTOR"
-      }
+    data: {
+      ...data
     },
     include: {
-      user: true,
-      reviews: true,
-      bookings: true,
       category: true
     }
   })
   return result;
 }
+
+const getAllTutors = async (payload: { search?: string | undefined }) => {
+
+  const result = await prisma.tutorProfiles.findMany({
+    where: {
+      user: {
+        role: "TUTOR",
+      }, OR: [
+        {
+          category: {
+            some: {
+              subjectName: {
+                contains: payload.search as string,
+                mode: "insensitive",
+              },
+            },
+          },
+        },
+        {
+          category: {
+            some: {
+              description: {
+                contains: payload.search as string,
+                mode: "insensitive",
+              },
+            },
+          },
+        },
+      ],
+    },
+    include: {
+      user: true,
+      reviews: true,
+      bookings: true,
+      category: true,
+    }
+  });
+
+  return result;
+};
+
 
 const getTutorById = async (id: number) => {
   const result = await prisma.tutorProfiles.findUnique({
@@ -38,12 +67,23 @@ const getTutorById = async (id: number) => {
   return result
 }
 
-const updateTutor = async (data: TutorProfiles, tutorId: number) => {
+const updateTutor = async (tutorId: number) => {
+  const allCategories = await prisma.categories.findMany({
+    select: { id: true },
+  });
+
   const result = await prisma.tutorProfiles.update({
     where: {
       id: tutorId
     },
-    data
+    data : {
+      category: {
+         set: allCategories.map((c) =>  ({ id: c.id }))
+      }
+    },
+    include: {
+      category: true
+    }
   })
   return result
 }
