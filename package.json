@@ -9,8 +9,8 @@
   "scripts": {
     "dev": "npx tsx watch src/server.ts",
     "seed:admin": "npx tsx src/scripts/seedAdmin.ts",
-    "build": "prisma generate && npx tsup src/server.ts --format esm --platform node --target node20 --outDir api --external @prisma/client --dts",
-    "start": "node api/server.js",
+    "build": "prisma generate && tsc",
+    "start": "node dist/server.js",
     "postinstall": "prisma generate"
   },
   "dependencies": {
