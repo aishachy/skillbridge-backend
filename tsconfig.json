@@ -9,7 +9,9 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "target": "ES2023",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     // For nodejs:
     // "lib": ["esnext"],
     // and npm install -D @types/node

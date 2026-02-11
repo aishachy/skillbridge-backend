@@ -1,5 +1,5 @@
 import { TutorAvailability } from "../../../generated/prisma";
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../lib/prisma.js";
 
 const createTutorAvailability = async (data: TutorAvailability) => {
     const result = await prisma.tutorAvailability.create({

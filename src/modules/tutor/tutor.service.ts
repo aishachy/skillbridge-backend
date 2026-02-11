@@ -1,5 +1,5 @@
 import {  Prisma ,TutorProfiles } from "../../../generated/prisma/client";
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../lib/prisma.js";
 
 
 
@@ -128,7 +128,7 @@ const updateTutor = async (tutorId: number) => {
     data: {
       tutorCategories: {
         deleteMany: {},
-        create: allCategories.map((c) => ({
+        create: allCategories.map((c:any) => ({
           category: { connect: { id: c.id } }
         }))
       }

@@ -1,5 +1,5 @@
 import { Users } from "../../../generated/prisma";
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../lib/prisma.js";
 import bcrypt from "bcryptjs"
 
 const createUser = async (data: Users) => {
@@ -24,7 +24,7 @@ const getAllUser = async (body: any) => {
             reviews: true
         }
     })
-    const usersWithTutorArray = users.map(user => ({
+    const usersWithTutorArray = users.map((user: { tutorProfiles: any; }) => ({
         ...user,
         tutorProfiles: user.tutorProfiles ? [user.tutorProfiles] : [],
     }));

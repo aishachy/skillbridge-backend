@@ -1,5 +1,5 @@
 import { Users } from "../../../generated/prisma"
-import { prisma } from "../../lib/prisma"
+import { prisma } from "../../lib/prisma.js"
 
 const studentBookings = async (studentId: number) => {
     const result = await prisma.bookings.findMany({

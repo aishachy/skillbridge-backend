@@ -1,5 +1,5 @@
 import { Categories, TutorProfiles } from "../../../generated/prisma/client";
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../lib/prisma.js";
 
 interface tutorCategories {
     tutor: TutorProfiles,

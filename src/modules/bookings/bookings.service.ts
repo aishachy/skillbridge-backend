@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Bookings } from "../../../generated/prisma";
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../lib/prisma.js";
 
 const createBookings = async (data: Bookings) => {
     const result = await prisma.bookings.create({

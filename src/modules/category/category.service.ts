@@ -1,5 +1,5 @@
 import { Categories } from "../../../generated/prisma";
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../lib/prisma.js";
 
 const createCategory = async (data: Categories) => {
     const result = await prisma.categories.create({
