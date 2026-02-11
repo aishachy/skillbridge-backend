@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import express from "express";
 
 // src/lib/prisma.ts
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 var prisma = new PrismaClient();
 
