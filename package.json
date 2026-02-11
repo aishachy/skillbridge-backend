@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "npx tsx watch src/start.ts",
     "seed:admin": "npx tsx src/scripts/seedAdmin.ts",
-    "build": "prisma generate && tsup src/server.ts --format esm --platform node --target node20 --outDir dist --no-treeshake,""build": "prisma generate && tsup src/server.ts --format esm --platform node --target node20 --outDir dist",
+    "build": "prisma generate && tsup src/server.ts --format esm --platform node --target node20 --outDir dist --no-treeshake,"
     "prestart": "prisma generate",
     "start": "node dist/server.js",
     "postinstall": "prisma generate"
