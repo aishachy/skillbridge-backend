@@ -1,16 +1,16 @@
 import express from "express";
 import corsMiddleware from "cors"
 import cookieParser from "cookie-parser"
-import { tutorRouter } from "./modules/tutor/tutor.router";
-import { userRouter } from "./modules/users/users.router";
+import { tutorRouter } from "./modules/tutor/tutor.router.js";
+import { userRouter } from "./modules/users/users.router.js";
 import { categoryRouter } from "./modules/category/category.router.js";
-import { bookingRouter } from "./modules/bookings/bookings.router";
-import { tutorAvailabilityRouter } from "./modules/tutorAvailability/tutorAvailability.router";
-import { reviewsRouter } from "./modules/reviews/reviews.router";
-import { authRouter } from "./modules/auth/auth.router";
-import { studentRouter } from "./modules/student/student.router";
-import { tutorCategoriesRouter } from "./modules/tutorCategories/tutorCategories.router";
-import { adminRouter } from "./modules/admin/admin.router";
+import { bookingRouter } from "./modules/bookings/bookings.router.js";
+import { tutorAvailabilityRouter } from "./modules/tutorAvailability/tutorAvailability.router.js";
+import { reviewsRouter } from "./modules/reviews/reviews.router.js";
+import { authRouter } from "./modules/auth/auth.router.js";
+import { studentRouter } from "./modules/student/student.router.js";
+import { tutorCategoriesRouter } from "./modules/tutorCategories/tutorCategories.router.js";
+import { adminRouter } from "./modules/admin/admin.router.js";
 
 const app = express();
 

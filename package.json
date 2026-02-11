@@ -14,7 +14,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",  "engines": {
+  "type": "module",  
+  "engines": {
     "node": "20.x"
   },
   "devDependencies": {
