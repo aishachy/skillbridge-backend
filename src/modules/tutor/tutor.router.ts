@@ -4,13 +4,13 @@ import auth from "../../middleware/auth";
 
 const router = express.Router();
 
-router.get('/tutor', auth("ADMIN", "TUTOR"), tutorController.getAllTutors)
+router.get('/tutor', tutorController.getAllTutors)
 
-router.get('/tutor/:id', auth("ADMIN", "TUTOR"), tutorController.getTutorById)
+router.get('/tutor/dashboard', auth("TUTOR", "ADMIN"), tutorController.getStats)
 
-router.get('/tutor/dashboard', auth("TUTOR"), tutorController.getStats)
+router.get('/tutor/:id', tutorController.getTutorById)
 
-router.post('/tutor', auth("TUTOR"), tutorController.createTutors)
+router.post('/tutor', tutorController.createTutors)
 
 router.put('/tutor/profile/:id', tutorController.updateTutor)
 

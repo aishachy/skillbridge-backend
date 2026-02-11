@@ -1,33 +1,98 @@
-import { TutorProfiles } from "../../../generated/prisma/client";
+import {  Prisma ,TutorProfiles } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
+
+
 const createTutor = async (data: TutorProfiles) => {
-  const result = await prisma.tutorProfiles.create({
-    data: {
-      ...data
-    },
+ return prisma.tutorProfiles.create({
+    data,
     include: {
-      category: true
+      tutorCategories: {
+        include: {
+          category: true
+        }
+      }
     }
-  })
-  return result;
+  });
 }
 
-const getAllTutors = async () => {
+const getAllTutors = async ({
+  search,
+  isFeatured,
+  minRating,
+  categoryNames
+}: {
+  search: string | undefined,
+  isFeatured: boolean | undefined,
+  minRating?: number;
+  categoryNames?: string[];
+}) => {
+  const andConditions: Prisma.TutorProfilesWhereInput[] = [];
+  if (search) {
+    andConditions.push({
+      OR: [
+        {
+          bio: {
+            contains: search,
+            mode: "insensitive"
+          }
+        },
+        {
+          perHourRate: {
+            contains: search,
+            mode: "insensitive"
+          }
+        }
+      ],
+    })
+  }
 
+  if (typeof isFeatured === 'boolean') {
+    andConditions.push({
+      isFeatured
+    })
+  }
+
+  if (minRating !== undefined) {
+    andConditions.push({ rating: { gte: minRating } });
+  }
+  if (categoryNames?.length) {
+    andConditions.push({
+      tutorCategories: {
+        some: {
+          category: {
+            subjectName: { in: categoryNames },
+          },
+        },
+      },
+    }as Prisma.TutorProfilesWhereInput);
+  }
   const result = await prisma.tutorProfiles.findMany({
     where: {
+      AND: andConditions,
       user: {
         role: "TUTOR",
-    } 
-  },
-      include: {
+      },
+    },
+    include: {
       reviews: true,
       bookings: true,
-      category: true,
-    }
-      }
-  );
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+      tutorCategories: {
+        include: {
+          category: {
+            select: { id: true, subjectName: true, description: true },
+          },
+        },
+      },
+    },
+  });
 
   return result;
 };
@@ -37,12 +102,17 @@ const getTutorById = async (id: number) => {
   const result = await prisma.tutorProfiles.findUnique({
     where: { id },
     include: {
-      user: true,
+      user: { select: { id: true, name: true, email: true } },
       reviews: true,
       bookings: true,
-      category: true
+      tutorCategories: {
+        include: {
+          category: { select: { id: true, subjectName: true } }
+        }
+      }
     }
-  })
+  }
+  )
   return result
 }
 
@@ -55,20 +125,26 @@ const updateTutor = async (tutorId: number) => {
     where: {
       id: tutorId
     },
-    data : {
-      category: {
-         set: allCategories.map((c) =>  ({ id: c.id }))
+    data: {
+      tutorCategories: {
+        deleteMany: {},
+        create: allCategories.map((c) => ({
+          category: { connect: { id: c.id } }
+        }))
       }
     },
     include: {
-      category: true
+      tutorCategories: {
+        include: {
+          category: true
+        }
+      }
     }
   })
   return result
 }
 
 interface updateProfileInput {
-  name?: string
   bio?: string
   education?: string
   experience?: string
@@ -76,21 +152,23 @@ interface updateProfileInput {
   location?: string
 }
 
-const updateTutorProfile = async (data: updateProfileInput, tutorId: number) => {
-  const result = prisma.tutorProfiles.update({
-    where: { id: tutorId },
-    data
+const updateTutorProfile = async (data: updateProfileInput, userId: number) => {
+  const result = await prisma.tutorProfiles.findUnique({
+    where: {
+      userId
+    }
   });
-  return result
+  if (!result) throw new Error("Tutor profile not found");
+  return prisma.tutorProfiles.update({
+    where: {
+      id: result.id
+    },
+    data
+  })
 }
 
 const getStats = async (tutorId: number) => {
-  const totalBookings = await prisma.bookings.count({
-    where: {
-      tutorId
-    }
-  });
-
+  const totalBookings = await prisma.bookings.count({ where: { tutorId } });
   const completedSessions = await prisma.bookings.count({
     where: { tutorId, status: "COMPLETED" }
   });

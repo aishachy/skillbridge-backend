@@ -19,7 +19,7 @@ const getAllCategories = async (req: Request, res: Response) => {
         res.status(201).json(result)
     } catch (e) {
         res.status(400).json({
-            error: 'student retrievtion failed',
+            error: 'category retrievtion failed',
             details: e
         })
     }

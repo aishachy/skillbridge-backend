@@ -1,6 +1,6 @@
 import { prisma } from "../../lib/prisma"
 import bcrypt from "bcryptjs";
-import jwt from 'jsonwebtoken';
+import generateToken from "../../utils/jwt";
 
 
 interface RegisterInput {
@@ -22,29 +22,38 @@ const registerUser = async (data: RegisterInput) => {
     });
 
     if (existingUser) {
-        throw new Error("User already exists");
+        throw { statusCode: 409, message: "User already exists" };
     }
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     const user = await prisma.users.create({
         data: {
-            ...data,
+            name: data.name,
+            email: data.email,
             password: hashedPassword,
             role: data.role ?? "STUDENT"
         },
     });
 
-    const secret = process.env.JWT_SECRET!;
-    const token = jwt.sign(
-        {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-        },
-        secret,
-        { expiresIn: "7d" }
-    );
+    if (user.role === "TUTOR") {
+        await prisma.tutorProfiles.create({
+            data: {
+                user: {
+                    connect: {
+                        id: user.id
+                    }
+                }
+            }
+        });
+    }
+
+
+    const token = generateToken({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+    })
 
     const { password, ...safeUser } = user;
 
@@ -57,20 +66,24 @@ const loginUser = async (data: LoginInput) => {
     })
 
     if (!user) {
-        throw new Error("Invalid Credentials")
+        throw { statusCode: 404, message: "User not found" };
     }
 
     const isMatch = await bcrypt.compare(data.password, user.password);
     if (!isMatch) {
-        throw new Error("Invalid Credentials")
+        throw { statusCode: 401, message: "Invalid email or password" };
     }
 
-    const secret = process.env.JWT_SECRET!;
-    const token = jwt.sign({ id: user.id, email: user.email, role: user.role, name: user.name }, secret, {
-        expiresIn: "7d"
+    const token = generateToken({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
     })
 
-    return { token, user }
+    const { password, ...safeUser } = user;
+
+    return { token, user: safeUser };
 }
 
 const currentUser = async (email: string) => {
@@ -82,6 +95,30 @@ const currentUser = async (email: string) => {
             email: true,
             role: true,
             createdAt: true,
+
+            tutorProfiles: {
+                select: {
+                    id: true,
+                    bio: true,
+                    education: true,
+                    experience: true,
+                    perHourRate: true,
+                    location: true,
+                    rating: true,
+                    isActive: true,
+
+                    tutorCategories: {
+                        select: {
+                            category: {
+                                select: {
+                                    id: true,
+                                    subjectName: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            },
         },
     });
 
@@ -91,7 +128,6 @@ const currentUser = async (email: string) => {
 
     return user;
 };
-
 
 export const authService = {
     loginUser,

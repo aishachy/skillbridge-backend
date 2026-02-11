@@ -16,16 +16,22 @@ const createUser = async (data: Users) => {
     return user;
 }
 
-const getAllUser = async (data: Users) => {
-    const result = await prisma.users.findMany({
+const getAllUser = async (body: any) => {
+    const users = await prisma.users.findMany({
         include: {
             tutorProfiles: true,
             bookings: true,
             reviews: true
         }
     })
-    return result;
+    const usersWithTutorArray = users.map(user => ({
+        ...user,
+        tutorProfiles: user.tutorProfiles ? [user.tutorProfiles] : [],
+    }));
+
+    return usersWithTutorArray;
 }
+
 
 const getUserById = async (userId: number) => {
     const user = await prisma.users.findUnique({
@@ -92,7 +98,16 @@ const getStats = async (userId: number) => {
         take: 5,
         include: {
             student: { select: { name: true } },
-            tutor: { select: { name: true } },
+            tutor: {
+                select: {
+                    user: {
+                        select: {
+                            name: true,
+                            email: true, // optional
+                        }
+                    }
+                }
+            },
             category: { select: { subjectName: true } }
         }
     });
@@ -109,7 +124,7 @@ const getStats = async (userId: number) => {
 }
 
 const banUser = async (userId: number) => {
-    const result =  prisma.users.update({
+    const result = prisma.users.update({
         where: { id: userId },
         data: { isBanned: true },
     });

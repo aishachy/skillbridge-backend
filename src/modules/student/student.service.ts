@@ -7,14 +7,15 @@ const studentBookings = async (studentId: number) => {
             studentId
         },
         include: {
-            tutor: {
+            student: {
                 select: {
                     name: true,
-                    category: {
-                        select: {
-                            subjectName: true
-                        }
-                    }
+                    email: true
+                }
+            },
+            category: {
+                select: {
+                    subjectName: true
                 }
             }
         },
@@ -48,7 +49,7 @@ const getProfile = async (studentId: number) => {
     return result
 };
 
-const updateProfile = async (studentId: number, data: Users) => {
+const updateProfile = async (studentId: number, data: Partial<Users>) => {
     const result = prisma.users.update({
         where: { id: studentId },
         data,
@@ -62,42 +63,71 @@ const updateProfile = async (studentId: number, data: Users) => {
     return result
 };
 
-const getStats = async (studentId: number) => {
+const getStats = async (userId: number) => {
+    const tutorProfile = await prisma.tutorProfiles.findUnique({
+        where: { userId }
+    });
+
+    if (!tutorProfile) {
+        return {
+            totalBookings: 0,
+            completedSessions: 0,
+            totalSpent: 0,
+            upcomingSessions: [],
+            pastSessions: []
+        };
+    }
+
+    const tutorId = tutorProfile.id;
     const totalBookings = await prisma.bookings.count({
         where: {
-            studentId
+            tutorId
         }
     });
 
     const completedSessions = await prisma.bookings.count({
-        where: { studentId, status: "COMPLETED" }
+        where: { tutorId, status: "COMPLETED" }
     });
 
     const totalSpentResult = await prisma.bookings.aggregate({
-        where: { studentId, status: "COMPLETED" },
+        where: { tutorId, status: "COMPLETED" },
         _sum: { price: true }
     });
     const totalSpent = totalSpentResult._sum.price ?? 0;
 
     const upcomingSessions = await prisma.bookings.findMany({
         where: {
-             studentId, 
-             status: "CONFIRMED"
+            tutorId,
+            status: "CONFIRMED"
         },
+        orderBy: { startTime: "asc" },
         include: {
-            tutor: { select: { name: true } },
-            category: { select: { subjectName: true } }
-        },
-        orderBy: { startTime: "asc" }
+            student: {
+                select: {
+                    name: true,
+                    email: true
+                }
+            },
+            category: {
+                select: {
+                    subjectName: true
+                }
+            }
+        }
     });
 
     const pastSessions = await prisma.bookings.findMany({
         where: {
-             studentId, 
-             status: "CONFIRMED"
+            tutorId,
+            status: "CONFIRMED"
         },
         include: {
-            tutor: { select: { name: true } },
+            student: {
+                select: {
+                    name: true,
+                    email: true
+                }
+            },
             category: { select: { subjectName: true } }
         },
         orderBy: { startTime: "asc" }

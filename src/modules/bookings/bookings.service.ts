@@ -12,7 +12,15 @@ const createBookings = async (data: Bookings) => {
 const getAllBookings = async (data: Bookings) => {
     const result = await prisma.bookings.findMany({
         include: {
-            student: true,
+            student: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    role: true,
+                    isBanned: true,
+                }
+            },
             tutor: true,
             category: true
         }
@@ -24,7 +32,15 @@ const getBookingById = async (id: number) => {
     const result = await prisma.bookings.findUnique({
         where: { id },
         include: {
-            student: true,
+            student: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    role: true,
+                    isBanned: true,
+                }
+            },
             tutor: true,
             category: true
         }

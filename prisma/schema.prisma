@@ -30,7 +30,6 @@ model Users {
 
 model TutorProfiles {
   id          Int      @id @default(autoincrement())
-  name        String
   bio         String?
   education   String?
   experience  String?
@@ -44,19 +43,36 @@ model TutorProfiles {
 
   userId              Int                 @unique
   user                Users               @relation(fields: [userId], references: [id])
-  category            Categories[]        @relation("CategoriesToTutorProfiles")
+  category            Categories[]        @relation("TutorCategories")
   reviews             Reviews[]
   bookings            Bookings[]
   tutorAvailabilities TutorAvailability[]
+  tutorCategories     TutorCategories[]
+
+  @@map("tutorProfiles")
 }
 
 model Categories {
-  id          Int     @id @default(autoincrement())
-  subjectName String  @unique
-  description String?
+  id          Int    @id @default(autoincrement())
+  subjectName String
+  description String
 
-  tutors   TutorProfiles[] @relation("CategoriesToTutorProfiles")
-  bookings Bookings[]
+  tutors          TutorProfiles[]   @relation("TutorCategories")
+  bookings        Bookings[]
+  tutorCategories TutorCategories[]
+
+  @@map("categories")
+}
+
+model TutorCategories {
+  tutorId    Int
+  categoryId Int
+
+  tutor    TutorProfiles @relation(fields: [tutorId], references: [id])
+  category Categories    @relation(fields: [categoryId], references: [id])
+
+  @@id([tutorId, categoryId])
+  @@map("tutor_categories")
 }
 
 model Bookings {

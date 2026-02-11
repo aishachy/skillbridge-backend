@@ -3,11 +3,7 @@ import { studentService } from "./student.service";
 
 const studentBookings = async (req: Request, res: Response) => {
   try {
-    const studentId = req.user?.id;
-    console.log(studentId);
-    if (!studentId) {
-      throw new Error("user not found");
-    }
+    const studentId = Number(req.params.studentId)
     const result = await studentService.studentBookings(studentId);
     res.status(200).json({
       success: true,
@@ -24,15 +20,10 @@ const studentBookings = async (req: Request, res: Response) => {
 
 const getProfile = async (req: Request, res: Response) => {
   try {
-    const studentId = req.user?.id;
-    if (!studentId) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized"
-      });
-    }
+    const studentId = Number(req.params.studentId)
 
     const profile = await studentService.getProfile(studentId);
+    if (!profile) return res.status(404).json({ success: false, message: "Student not found" });
     res.status(200).json({
       success: true,
       data: profile
@@ -48,7 +39,7 @@ const getProfile = async (req: Request, res: Response) => {
 
 const updateProfile = async (req: Request, res: Response) => {
   try {
-    const studentId = req.user?.id;
+    const studentId = Number(req.params.studentId)
     if (!studentId) {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
@@ -71,11 +62,11 @@ const updateProfile = async (req: Request, res: Response) => {
 
 const getStats = async (req: Request, res: Response) => {
   try {
-    const studentId = req.user?.id; 
-    if (!studentId)
+    const userId = (req.user as any)?.id; 
+    if (!userId)
       return res.status(401).json({ success: false, message: "Unauthorized" });
 
-    const stats = await studentService.getStats(studentId)
+    const stats = await studentService.getStats(userId)
 
     res.status(200).json({ success: true, data: stats });
   } catch (e) {
