@@ -6,13 +6,14 @@
   "engines": {
     "node": "20.x"
   },
-  "scripts": {
-    "dev": "npx tsx watch src/server.ts",
-    "seed:admin": "npx tsx src/scripts/seedAdmin.ts",
-    "build": "prisma generate && tsup src/server.ts --format esm --platform node --target node20 --outDir api",
-    "start": "node api/server.js",
-    "postinstall": "prisma generate"
-  },
+"scripts": {
+  "dev": "npx tsx watch src/start.ts",
+  "seed:admin": "npx tsx src/scripts/seedAdmin.ts",
+  "build": "prisma generate && tsup src/start.ts --format esm --platform node --target node20 --outDir dist",
+  "prestart": "prisma generate",
+  "start": "node dist/start.js",
+  "postinstall": "prisma generate"
+},
   "dependencies": {
     "@prisma/client": "^7.3.0",
     "bcryptjs": "^3.0.3",
