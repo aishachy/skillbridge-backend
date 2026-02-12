@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient, TutorProfiles } from "@prisma/client";
+import { Prisma, TutorProfiles } from "@prisma/client";
 import { prisma } from "../../lib/prisma.js";
 
 

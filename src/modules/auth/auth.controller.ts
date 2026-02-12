@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { authService } from "./auth.service";
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../lib/prisma.js";
 
 const loginUser = async (req: Request, res: Response) => {
     try {

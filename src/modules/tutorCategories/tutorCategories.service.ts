@@ -1,4 +1,4 @@
-import { Categories, PrismaClient, TutorProfiles } from "@prisma/client";
+import { Categories, TutorProfiles } from "@prisma/client";
 import { prisma } from "../../lib/prisma.js";
 
 interface tutorCategories {
