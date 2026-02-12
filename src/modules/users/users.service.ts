@@ -1,4 +1,4 @@
-import { Users } from "../../../generated/prisma";
+import { PrismaClient, Users } from "@prisma/client";
 import { prisma } from "../../lib/prisma.js";
 import bcrypt from "bcryptjs"
 
