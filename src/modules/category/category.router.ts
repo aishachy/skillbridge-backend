@@ -4,7 +4,7 @@ import auth from "../../middleware/auth"
 
 const router = express.Router()
 
-router.get('/', auth("ADMIN"), categoryController.getAllCategories)
+router.get('/', categoryController.getAllCategories)
 
 router.get('/:id', auth("ADMIN"), categoryController.getCategoriesById)
 
