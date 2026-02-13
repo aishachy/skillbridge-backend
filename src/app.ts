@@ -29,7 +29,7 @@ app.use('/api', tutorRouter);
 
 app.use('/admin', userRouter)
 
-app.use('/admin/categories', categoryRouter)
+app.use('/api/categories', categoryRouter)
 
 app.use('/api', bookingRouter)
 
