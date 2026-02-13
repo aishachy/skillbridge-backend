@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "npx tsx watch src/start.ts",
-    "build": "tsup src --format esm --platform node --target node20 --outDir dist --no-treeshake",
+    "build": "prisma generate && tsup src --format esm --platform node --target node20 --outDir dist --no-treeshake",
     "prestart": "prisma generate",
     "start": "npm run build && node dist/server.js",
     "postinstall": "prisma generate"
