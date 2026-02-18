@@ -17,30 +17,51 @@ const createTutors = async (req: Request, res: Response) => {
 
 const getAllTutors = async (req: Request, res: Response) => {
     try {
-        const { search } = req.query
-        const searchString = typeof search === 'string' ? search : undefined
-        const isFeatured = req.query.isFeatured
-            ? req.query.isFeatured === 'true'
-                ? true
-                : req.query.isFeatured === 'false'
-                    ? false
-                    : undefined
-            : undefined
+        const { search, isFeatured, minRating, category } = req.query;
 
-        const result = await tutorService.getAllTutors({ search: searchString, isFeatured })
-        res.status(200).json({
+        // Start with required-but-possibly-undefined properties
+        const filters: {
+            search: string | undefined;
+            isFeatured: boolean | undefined;
+            minRating?: number;
+            categoryNames?: string[];
+        } = {
+            search: undefined,
+            isFeatured: undefined,
+        };
+
+        if (typeof minRating === "string") {
+            filters.minRating = Number(minRating);
+        }
+
+        if (typeof category === "string") {
+            filters.categoryNames = category.split(",");
+        }
+
+        if (typeof search === "string") {
+            filters.search = search;
+        }
+
+        if (typeof isFeatured === "string") {
+            filters.isFeatured = isFeatured === "true";
+        }
+
+        const result = await tutorService.getAllTutors(filters);
+
+        return res.status(200).json({
             success: true,
-            data: result
-        })
+            data: result,
+        });
+
     } catch (error) {
-        console.error("error:", error);
-        res.status(400).json({
+        console.error("Tutors fetch failed:", error);
+
+        return res.status(500).json({
             success: false,
-            error: "tutors fetch failed",
-            details: error
-        })
+            message: "Failed to fetch tutors",
+        });
     }
-}
+};
 
 const getTutorById = async (req: Request, res: Response) => {
     try {

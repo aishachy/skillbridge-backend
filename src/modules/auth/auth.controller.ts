@@ -76,25 +76,6 @@ const currentUser = async (req: Request, res: Response) => {
                 email: true,
                 role: true,
                 createdAt: true,
-
-                tutorProfiles: {
-                    select: {
-                        id: true,
-                        bio: true,
-                        education: true,
-                        experience: true,
-                        perHourRate: true,
-                        location: true,
-                        rating: true,
-                        tutorCategories: {
-                            select: {
-                                category: {
-                                    select: { id: true, subjectName: true },
-                                },
-                            },
-                        },
-                    },
-                },
             },
         });
 

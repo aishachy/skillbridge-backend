@@ -4,7 +4,7 @@ import { prisma } from "../../lib/prisma.js";
 
 
 const createTutor = async (data: TutorProfiles) => {
- return prisma.tutorProfiles.create({
+  return prisma.tutorProfiles.create({
     data,
     include: {
       tutorCategories: {
@@ -38,10 +38,12 @@ const getAllTutors = async ({
           }
         },
         {
-          perHourRate: {
-            contains: search,
-            mode: "insensitive"
-          }
+          user: {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
         }
       ],
     })
@@ -65,7 +67,7 @@ const getAllTutors = async ({
           },
         },
       },
-    }as Prisma.TutorProfilesWhereInput);
+    } as Prisma.TutorProfilesWhereInput);
   }
   const result = await prisma.tutorProfiles.findMany({
     where: {
@@ -128,7 +130,7 @@ const updateTutor = async (tutorId: number) => {
     data: {
       tutorCategories: {
         deleteMany: {},
-        create: allCategories.map((c:any) => ({
+        create: allCategories.map((c: any) => ({
           category: { connect: { id: c.id } }
         }))
       }

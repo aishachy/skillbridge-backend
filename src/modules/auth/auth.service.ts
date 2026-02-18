@@ -95,30 +95,6 @@ const currentUser = async (email: string) => {
             email: true,
             role: true,
             createdAt: true,
-
-            tutorProfiles: {
-                select: {
-                    id: true,
-                    bio: true,
-                    education: true,
-                    experience: true,
-                    perHourRate: true,
-                    location: true,
-                    rating: true,
-                    isActive: true,
-
-                    tutorCategories: {
-                        select: {
-                            category: {
-                                select: {
-                                    id: true,
-                                    subjectName: true,
-                                },
-                            },
-                        },
-                    },
-                },
-            },
         },
     });
 
