@@ -19,7 +19,7 @@ const getAllTutors = async (req: Request, res: Response) => {
     try {
         const { search, isFeatured, minRating, category } = req.query;
 
-        // Start with required-but-possibly-undefined properties
+        
         const filters: {
             search: string | undefined;
             isFeatured: boolean | undefined;
