@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import e, { Request, Response } from "express"
 import { tutorService } from "./tutor.service"
 import { prisma } from "../../lib/prisma"
 
@@ -64,7 +64,7 @@ const getAllTutors = async (req: Request, res: Response) => {
         });
     }
 };
-
+e
 const getTutorById = async (req: Request, res: Response) => {
     try {
         const tutorId = Number(req.params.id);
