@@ -93,9 +93,6 @@ model Bookings {
   category Categories    @relation(fields: [categoryId], references: [id])
   reviews  Reviews?
 
-  availabilityId      Int?                @unique
-  availability        TutorAvailability?  @relation("BookingToAvailability", fields: [availabilityId], references: [id])
-
 }
 
 model Reviews {
@@ -124,7 +121,6 @@ model TutorAvailability {
   updatedAt DateTime           @updatedAt
 
   tutor      TutorProfiles @relation(fields: [tutorId], references: [id])
-  booking    Bookings?     @relation("BookingToAvailability") 
 
   @@unique([tutorId, startTime, endTime])
 }
