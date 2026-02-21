@@ -46,6 +46,8 @@ const getAllTutors = async (req: Request, res: Response) => {
             filters.isFeatured = isFeatured === "true";
         }
 
+        console.log("Filters sent to service:", filters);
+
         const result = await tutorService.getAllTutors(filters);
 
         return res.status(200).json({
@@ -53,8 +55,8 @@ const getAllTutors = async (req: Request, res: Response) => {
             data: result,
         });
 
-    } catch (error) {
-        console.error("Tutors fetch failed:", error);
+    } catch (err) {
+        console.error("Tutors fetch failed:", err);
 
         return res.status(500).json({
             success: false,

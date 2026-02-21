@@ -65,38 +65,29 @@ const getAllTutors = async ({
       tutorCategories: {
         some: {
           category: {
-            subjectName: { in: categoryNames, mode: "insensitive" },
+            subjectName: { in: categoryNames },
           },
         },
       },
     });
   }
-  const result = await prisma.tutorProfiles.findMany({
-    where: {
-      AND: andConditions
-    },
-    include: {
-      reviews: true,
-      bookings: true,
-      user: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
+  try {
+    const result = await prisma.tutorProfiles.findMany({
+      where: { AND: andConditions },
+      include: {
+        reviews: true,
+        bookings: true,
+        user: { select: { id: true, name: true, email: true } },
+        tutorCategories: { include: { category: { select: { id: true, subjectName: true, description: true } } } },
       },
-      tutorCategories: {
-        include: {
-          category: {
-            select: { id: true, subjectName: true, description: true },
-          },
-        },
-      },
-    },
-  });
-
-  return result;
+    });
+    return result;
+  } catch (err) {
+    console.error("Prisma error in getAllTutors:", err);
+    throw err; // rethrow so handler returns 500
+  }
 };
+
 
 
 const getTutorById = async (id: number) => {
