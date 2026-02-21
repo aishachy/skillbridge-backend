@@ -76,6 +76,7 @@ const getAllTutors = async ({
           include: {
             student: { select: { id: true, name: true } },
             category: { select: { id: true, subjectName: true } },
+            availability: true
           },
         },
         tutorCategories: {
@@ -115,12 +116,15 @@ const getTutorById = async (id: number) => {
         },
       },
 
-      bookings: true,
-
-      tutorCategories: {
+      bookings: {
         include: {
-          category: true,
+          student: { select: { id: true, name: true, email: true } },
+          category: { select: { id: true, subjectName: true } },
+          availability: true,
         },
+      },
+      tutorCategories: {
+        include: { category: { select: { id: true, subjectName: true } } }
       },
     },
   }
