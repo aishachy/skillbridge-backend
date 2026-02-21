@@ -27,9 +27,7 @@ const getAllTutors = async ({
   minRating?: number;
   categoryNames?: string[];
 }) => {
-  const andConditions: Prisma.TutorProfilesWhereInput[] = [
-     { user: { role: "TUTOR" } }
-  ];
+  const andConditions: Prisma.TutorProfilesWhereInput[] = [];
   if (search) {
     andConditions.push({
       OR: [
@@ -71,23 +69,35 @@ const getAllTutors = async ({
       },
     });
   }
-  try {
-    const result = await prisma.tutorProfiles.findMany({
-      where: { AND: andConditions },
-      include: {
-        reviews: true,
-        bookings: true,
-        user: { select: { id: true, name: true, email: true } },
-        tutorCategories: { include: { category: { select: { id: true, subjectName: true, description: true } } } },
+  const result = await prisma.tutorProfiles.findMany({
+    where: {
+      AND: andConditions,
+      user: {
+        role: "TUTOR",
       },
-    });
-    return result;
-  } catch (err) {
-    console.error("Prisma error in getAllTutors:", err);
-    throw err; // rethrow so handler returns 500
-  }
-};
+    },
+    include: {
+      reviews: true,
+      bookings: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+      tutorCategories: {
+        include: {
+          category: {
+            select: { id: true, subjectName: true, description: true },
+          },
+        },
+      },
+    },
+  });
 
+  return result;
+};
 
 
 const getTutorById = async (id: number) => {
