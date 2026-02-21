@@ -96,7 +96,7 @@ const bookTutorSlot = async (data: BookTutorInput) => {
             endTime: slot.endTime,
             price: data.price,
             status: "CONFIRMED",
-            availabilityId: slot.id, 
+            availabilityId: slot.id,
         },
         include: {
             student: true,
@@ -117,9 +117,88 @@ const bookTutorSlot = async (data: BookTutorInput) => {
     return booking;
 };
 
+const getStudentBookings = async (studentId: number) => {
+    const result = await prisma.bookings.findMany({
+        where: { studentId },
+        include: {
+            tutor: true,
+            category: true,
+            availability: true,
+        },
+        orderBy: {
+            createdAt: "desc"
+        }
+    })
+    return result
+}
+
+const getTutorBookings = async (tutorId: number) => {
+    const result = await prisma.bookings.findMany({
+        where: {
+            tutorId
+        },
+        include: {
+            student: true,
+            category: true,
+            availability: true
+        },
+        orderBy: { createdAt: "desc" }
+    })
+    return result
+}
+
+const updateBooking = async (bookingId: number,
+    status: "CONFIRMED" | "COMPLETED" | 'CANCELLED'
+) => {
+    const result = await prisma.bookings.findUnique({
+        where: { id: bookingId }
+    })
+    if (!result) {
+        throw new Error('Booking not found')
+    }
+    return await prisma.bookings.update({
+        where: { id: bookingId },
+        data: { status }
+    })
+}
+
+const cancelBooking = async (bookingId: number) => {
+    const result = await prisma.bookings.findUnique({
+        where: { id: bookingId },
+        include: { availability: true },
+    });
+
+    if (!result) {
+        throw new Error("Booking not found");
+    }
+
+    await prisma.bookings.update({
+        where: { id: bookingId },
+        data: { status: "CANCELLED" },
+    });
+
+    if (result.availabilityId) {
+        await prisma.tutorAvailability.update({
+            where: { id: result.availabilityId },
+            data: {
+                status: "AVAILABLE",
+                booking: { disconnect: true },
+            },
+        });
+    }
+
+    return { message: "Booking cancelled successfully" };
+};
+
+
+
 export const bookingsService = {
     createBookings,
     getAllBookings,
     getBookingById,
-    bookTutorSlot
+    bookTutorSlot,
+    getStudentBookings,
+    getTutorBookings,
+    updateBooking,
+    cancelBooking
 }
