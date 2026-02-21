@@ -3,7 +3,18 @@ import { bookingsService } from "./bookings.service";
 
 const createBookings = async (req: Request, res: Response) => {
     try {
-        const result = await bookingsService.createBookings(req.body)
+        const studentId = req.user?.id;
+        const {tutorId, categoryId, availabilityId, price, startTime,endTime} = req.body
+
+        const result = await bookingsService.createBookings({
+            studentId,
+            tutorId,
+            categoryId,
+            availabilityId,
+            price,
+            startTime,
+            endTime
+        })
         res.status(201).json({
             success: true,
             message: "Booking created successfully",

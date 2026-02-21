@@ -33,7 +33,7 @@ app.use('/api/categories', categoryRouter)
 
 app.use('/api', bookingRouter)
 
-app.use('/api/tutor/availability', tutorAvailabilityRouter)
+app.use('/api/availability', tutorAvailabilityRouter)
 
 app.use('/api', reviewsRouter)
 
