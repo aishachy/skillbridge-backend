@@ -73,10 +73,7 @@ const getAllTutors = async ({
   }
   const result = await prisma.tutorProfiles.findMany({
     where: {
-      AND: andConditions,
-      user: {
-        role: "TUTOR",
-      },
+      AND: andConditions
     },
     include: {
       reviews: true,
