@@ -10,10 +10,21 @@ const createCategory = async (data: Categories) => {
 
 const getAllCategories = async (data: Categories) => {
     const result = await prisma.categories.findMany({
-        include: {
-            tutors: true,
-            bookings: true
+      select: {
+        id: true,
+        subjectName: true,
+        bookings: {
+          select: {
+            id: true,
+            student: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
+          }
         }
+      }
     })
     return result
 }

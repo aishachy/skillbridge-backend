@@ -64,11 +64,11 @@ const updateProfile = async (studentId: number, data: Partial<Users>) => {
 };
 
 const getStats = async (userId: number) => {
-    const tutorProfile = await prisma.tutorProfiles.findUnique({
+    const studentProfile = await prisma.tutorProfiles.findUnique({
         where: { userId }
     });
 
-    if (!tutorProfile) {
+    if (!studentProfile) {
         return {
             totalBookings: 0,
             completedSessions: 0,
@@ -78,34 +78,53 @@ const getStats = async (userId: number) => {
         };
     }
 
-    const tutorId = tutorProfile.id;
+    const studentId = studentProfile.id;
+
+    // Total Bookings
     const totalBookings = await prisma.bookings.count({
+        where: { studentId }
+    });
+
+    // Completed Sessions
+    const completedSessions = await prisma.bookings.count({
         where: {
-            tutorId
+            studentId,
+            status: "COMPLETED"
         }
     });
 
-    const completedSessions = await prisma.bookings.count({
-        where: { tutorId, status: "COMPLETED" }
-    });
-
+    // Total Spent
     const totalSpentResult = await prisma.bookings.aggregate({
-        where: { tutorId, status: "COMPLETED" },
+        where: {
+            studentId,
+            status: "COMPLETED"
+        },
         _sum: { price: true }
     });
+
     const totalSpent = totalSpentResult._sum.price ?? 0;
 
+    // Upcoming Sessions
     const upcomingSessions = await prisma.bookings.findMany({
         where: {
-            tutorId,
-            status: "CONFIRMED"
+            studentId,
+            status: "CONFIRMED",
+            startTime: {
+                gte: new Date()
+            }
         },
         orderBy: { startTime: "asc" },
         include: {
-            student: {
+            tutor: {
                 select: {
-                    name: true,
-                    email: true
+                    id: true,
+                    bio: true,
+                    user: {
+                        select: {
+                            name: true,
+                            email: true
+                        }
+                    }
                 }
             },
             category: {
@@ -116,21 +135,32 @@ const getStats = async (userId: number) => {
         }
     });
 
+    // Past Sessions
     const pastSessions = await prisma.bookings.findMany({
         where: {
-            tutorId,
-            status: "CONFIRMED"
+            studentId,
+            status: "COMPLETED"
         },
+        orderBy: { startTime: "desc" },
         include: {
-            student: {
+            tutor: {
                 select: {
-                    name: true,
-                    email: true
+                    id: true,
+                    bio: true,
+                    user: {
+                        select: {
+                            name: true,
+                            email: true
+                        }
+                    }
                 }
             },
-            category: { select: { subjectName: true } }
-        },
-        orderBy: { startTime: "asc" }
+            category: {
+                select: {
+                    subjectName: true
+                }
+            }
+        }
     });
 
     return {
@@ -139,8 +169,8 @@ const getStats = async (userId: number) => {
         totalSpent,
         upcomingSessions,
         pastSessions
-    }
-}
+    };
+};
 
 
 export const studentService = {

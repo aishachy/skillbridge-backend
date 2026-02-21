@@ -16,9 +16,12 @@ const createCategory = async (req: Request, res: Response) => {
 const getAllCategories = async (req: Request, res: Response) => {
     try {
         const result = await categoryService.getAllCategories(req.body)
-        res.status(201).json(result)
+        res.status(201).json({
+            success: true,
+            data: result
+        })
     } catch (e) {
-        res.status(400).json({
+        res.status(500).json({
             error: 'category retrievtion failed',
             details: e
         })
