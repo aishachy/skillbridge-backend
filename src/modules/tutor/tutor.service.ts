@@ -27,7 +27,9 @@ const getAllTutors = async ({
   minRating?: number;
   categoryNames?: string[];
 }) => {
-  const andConditions: Prisma.TutorProfilesWhereInput[] = [];
+  const andConditions: Prisma.TutorProfilesWhereInput[] = [
+     { user: { role: "TUTOR" } }
+  ];
   if (search) {
     andConditions.push({
       OR: [
@@ -63,11 +65,11 @@ const getAllTutors = async ({
       tutorCategories: {
         some: {
           category: {
-            subjectName: { in: categoryNames },
+            subjectName: { in: categoryNames, mode: "insensitive" },
           },
         },
       },
-    } as Prisma.TutorProfilesWhereInput);
+    });
   }
   const result = await prisma.tutorProfiles.findMany({
     where: {
