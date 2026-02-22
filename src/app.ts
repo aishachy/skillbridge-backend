@@ -18,7 +18,7 @@ app.use(
     corsMiddleware({
         origin: [
             "http://localhost:3000",
-            "https://your-frontend.vercel.app"
+            "https://skillbridge-frontend-indol.vercel.app/"
         ],
         credentials: true,
     })
