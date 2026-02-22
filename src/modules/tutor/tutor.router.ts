@@ -10,9 +10,9 @@ router.get('/tutor/dashboard', auth("TUTOR", "ADMIN"), tutorController.getStats)
 
 router.get('/tutor/:id', tutorController.getTutorById)
 
-router.post('/tutor', tutorController.createTutors)
+router.post('/tutor', auth("TUTOR", "ADMIN"), tutorController.createTutors)
 
-router.put('/tutor/profile/:id', tutorController.updateTutor)
+router.put('/tutor/profile/:id', auth("TUTOR", "ADMIN"), tutorController.updateTutor)
 
 router.put('/tutor/profile', auth("TUTOR"), tutorController.updateTutorProfile)
 
