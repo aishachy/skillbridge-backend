@@ -19,7 +19,7 @@ const auth = (...roles: string[]) => {
             const token = header.split(" ")[1];
             const decoded = jwt.verify(token!, process.env.JWT_SECRET!) as UserJwtPayload;
 
-            req.user = { id: decoded.id, role: decoded.role };
+            req.user = { id: decoded.id, role: decoded.role, email: decoded.email };
 
             console.log("REQ USER:", req.user);
 

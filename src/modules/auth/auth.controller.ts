@@ -68,19 +68,7 @@ const currentUser = async (req: Request, res: Response) => {
             return res.status(401).json({ success: false, message: "Unauthorized" });
         }
 
-        const user = await prisma.users.findUnique({
-            where: { id: userId },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                role: true,
-                createdAt: true,
-            },
-        });
-
-        if (!user) throw new Error("User not found");
-
+        const user = await authService.currentUser(userId)
         return res.status(200).json({ success: true, user });
     } catch (err: any) {
         return res.status(400).json({ success: false, error: err.message });

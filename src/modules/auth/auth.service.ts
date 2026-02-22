@@ -86,9 +86,9 @@ const loginUser = async (data: LoginInput) => {
     return { token, user: safeUser };
 }
 
-const currentUser = async (email: string) => {
+const currentUser = async (userId: number) => {
     const user = await prisma.users.findUnique({
-        where: { email },
+        where: { id: userId },
         select: {
             id: true,
             name: true,
