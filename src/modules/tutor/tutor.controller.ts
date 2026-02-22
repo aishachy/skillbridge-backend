@@ -121,6 +121,11 @@ const updateTutorProfile = async (req: Request, res: Response) => {
 
 };
 
+const deleteTutor = async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+  const result = await tutorService.deleteTutor(id);
+  res.json(result);
+};
 
 const getStats = async (req: Request, res: Response) => {
     try {
@@ -163,5 +168,6 @@ export const tutorController = {
     getTutorById,
     updateTutor,
     updateTutorProfile,
+    deleteTutor,
     getStats
 }

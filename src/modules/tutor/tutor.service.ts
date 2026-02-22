@@ -62,7 +62,7 @@ const getAllTutors = async ({
     const tutors = await prisma.tutorProfiles.findMany({
       where: {
         AND: andConditions,
-        user: { role: "TUTOR" }, 
+        user: { role: "TUTOR" },
       },
       include: {
         user: { select: { id: true, name: true, email: true } },
@@ -71,7 +71,7 @@ const getAllTutors = async ({
             student: { select: { id: true, name: true } },
           },
         },
-     
+
         bookings: {
           include: {
             student: { select: { id: true, name: true } },
@@ -181,6 +181,12 @@ const updateTutorProfile = async (data: updateProfileInput, userId: number) => {
   })
 }
 
+const deleteTutor = async (id: number) => {
+  return prisma.tutorProfiles.delete({
+    where: { id }
+  });
+};
+
 const getStats = async (tutorId: number) => {
   const totalBookings = await prisma.bookings.count({ where: { tutorId } });
   const completedSessions = await prisma.bookings.count({
@@ -233,6 +239,7 @@ export const tutorService = {
   getTutorById,
   updateTutor,
   updateTutorProfile,
-  getStats
+  deleteTutor,
+  getStats,
 }
 
