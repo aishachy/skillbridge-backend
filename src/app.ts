@@ -16,8 +16,11 @@ const app = express();
 
 app.use(
     corsMiddleware({
-        origin: "http://localhost:3000",
-        credentials: true, 
+        origin: [
+            "http://localhost:3000",
+            "https://your-frontend.vercel.app"
+        ],
+        credentials: true,
     })
 );
 
