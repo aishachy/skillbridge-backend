@@ -1,7 +1,22 @@
 import { Prisma, TutorProfiles } from "@prisma/client";
 import { prisma } from "../../lib/prisma.js";
 
+interface UpdateTutorInput {
+  categoryId: any;
+  bio?: string;
+  education?: string;
+  experience?: string;
+  perHourRate?: string;
+  location?: string;
+}
 
+interface updateProfileInput {
+  bio?: string
+  education?: string
+  experience?: string
+  perHourRate?: string
+  location?: string
+}
 
 const createTutor = async (data: TutorProfiles) => {
   return prisma.tutorProfiles.create({
@@ -130,41 +145,35 @@ const getTutorById = async (id: number) => {
   return result
 }
 
-const updateTutor = async (tutorId: number) => {
-  const allCategories = await prisma.categories.findMany({
-    select: { id: true },
-  });
+const updateTutor = async (tutorId: number, data: UpdateTutorInput) => {
+  // Prepare category updates if categoryIds are provided
+  let categoriesUpdate = undefined;
+  if (data.categoryId) {
+    categoriesUpdate = {
+      deleteMany: {},
+      create: data.categoryId.map((id: any) => ({
+        category: { connect: { id } }
+      }))
+    };
+  }
+
+  const { categoryId, ...profileData } = data;
 
   const result = await prisma.tutorProfiles.update({
-    where: {
-      id: tutorId
-    },
+    where: { id: tutorId },
     data: {
-      tutorCategories: {
-        deleteMany: {},
-        create: allCategories.map((c: any) => ({
-          category: { connect: { id: c.id } }
-        }))
-      }
+      ...profileData, 
+      ...(categoriesUpdate ? { tutorCategories: categoriesUpdate } : {}),
     },
     include: {
       tutorCategories: {
-        include: {
-          category: true
-        }
+        include: { category: true }
       }
     }
-  })
+  });
   return result
 }
 
-interface updateProfileInput {
-  bio?: string
-  education?: string
-  experience?: string
-  perHourRate?: string
-  location?: string
-}
 
 const updateTutorProfile = async (data: updateProfileInput, userId: number) => {
   const result = await prisma.tutorProfiles.findUnique({

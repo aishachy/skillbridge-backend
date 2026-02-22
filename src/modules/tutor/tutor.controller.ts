@@ -85,7 +85,12 @@ const getTutorById = async (req: Request, res: Response) => {
 const updateTutor = async (req: Request, res: Response) => {
     try {
         const tutorId = Number(req.params.id);
-        const result = await tutorService.updateTutor(tutorId)
+        if (!tutorId) {
+            return res.status(400).json({ message: "Invalid tutor ID" });
+        }
+        const updateData = req.body;
+
+        const result = await tutorService.updateTutor(tutorId, updateData)
         res.status(200).json(result)
     } catch (e) {
         res.status(400).json({
@@ -122,9 +127,9 @@ const updateTutorProfile = async (req: Request, res: Response) => {
 };
 
 const deleteTutor = async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
-  const result = await tutorService.deleteTutor(id);
-  res.json(result);
+    const id = Number(req.params.id);
+    const result = await tutorService.deleteTutor(id);
+    res.json(result);
 };
 
 const getStats = async (req: Request, res: Response) => {
