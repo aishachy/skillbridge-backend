@@ -16,6 +16,6 @@ router.put('/tutor/profile/:id', auth("TUTOR", "ADMIN"), tutorController.updateT
 
 router.put('/tutor/profile', auth("TUTOR"), tutorController.updateTutorProfile)
 
-router.delete('/tutor/:id', tutorController.deleteTutor)
+router.delete('/tutor/:id', auth("ADMIN", "TUTOR"), tutorController.deleteTutor)
 
 export const tutorRouter = router;
