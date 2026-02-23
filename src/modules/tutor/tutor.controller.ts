@@ -110,7 +110,7 @@ const updateTutorProfile = async (req: Request, res: Response) => {
             });
         }
 
-        const result = await tutorService.updateTutorProfile(userId, req.body);
+        const result = await tutorService.updateTutorProfile(req.body, userId);
         res.status(200).json({
             success: true,
             message: "Tutor profile updated successfully",
