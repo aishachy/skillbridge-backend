@@ -1,125 +1,305 @@
+// import { Request, Response } from "express";
+// import { userService } from "./users.service";
+
+// const createUser = async (req: Request, res: Response) => {
+//     try {
+//         const result = await userService.createUser(req.body)
+//         res.status(201).json(result)
+//     } catch (e) {
+//         res.status(400).json({
+//             error: 'student creation failed',
+//             details: e
+//         })
+//     }
+// }
+
+// const getAllUser = async (req: Request, res: Response) => {
+//     try {
+//         const result = await userService.getAllUser(req.body)
+//         res.status(201).json(result)
+//     } catch (e) {
+//         res.status(400).json({
+//             error: 'student retrievtion failed',
+//             details: e
+//         })
+//     }
+// }
+
+// const getUserById = async (req: Request, res: Response) => {
+//     try {
+//         const userId = Number(req.params.id);
+//         const result = await userService.getUserById(userId)
+
+//         if (!result) {
+//             return res.status(404).json({ error: "User not found" });
+//         }
+//         res.status(200).json(result)
+//     } catch (e) {
+//         res.status(400).json({
+//             error: "User by id fetch failed",
+//             details: e
+//         })
+//     }
+// }
+
+
+// const updateUser = async (req: Request, res: Response) => {
+//     try {
+//         const userId = Number(req.params.id);
+
+//         const result = await userService.updateUser(req.body, userId)
+//         res.status(200).json(result)
+//     } catch (e) {
+//         res.status(400).json({
+//             error: "user update failed",
+//             details: e
+//         })
+//     }
+// }
+
+// const deleteUser = async (req: Request, res: Response) => {
+//     try {
+//         const userId = Number(req.params.id);
+//         const result = await userService.deleteUser(userId);
+//         res.status(200).json({
+//             success: true,
+//             message: result.message
+//         });
+//     } catch (err: any) {
+//         res.status(404).json({
+//             success: false,
+//             message: err.message
+//         });
+//     }
+// };
+
+// const getStats = async (req: Request, res: Response) => {
+//     try {
+//         const userId = req.user?.id;
+//         if (!userId)
+//             return res.status(401).json({ success: false, message: "Unauthorized" });
+
+//         const stats = await userService.getStats(userId)
+
+//         res.status(200).json({ success: true, data: stats });
+//     } catch (e) {
+//         const errorMessage = (e instanceof Error) ? e.message : "Stats fetched failed!"
+//         res.status(400).json({
+//             error: errorMessage,
+//             details: e
+//         })
+//     }
+// }
+
+// const banUserController = async (req: Request, res: Response) => {
+//     const userId = Number(req.params.id);
+//     try {
+//         const user = await userService.banUser(userId);
+//         res.json({ 
+//             success: true, 
+//             message: "User banned successfully",
+//             user });
+//     } catch (err) {
+//         res.status(400).json({ 
+//             success: false,
+//             message: "Error banning user", 
+//             error: err });
+//     }
+// };
+
+// const unbanUserController = async (req: Request, res: Response) => {
+//     const userId = Number(req.params.id);
+//     try {
+//         const user = await userService.unbanUser(userId);
+//         res.json({ 
+//             success: true, 
+//             message: "User unbanned successfully", 
+//             user });
+//     } catch (err) {
+//         res.status(400).json({ 
+//             success: false, 
+//             message: "Error unbanning user", 
+//             error: err });
+//     }
+// };
+
+// export const UserController = {
+//     createUser,
+//     getAllUser,
+//     getUserById,
+//     updateUser,
+//     deleteUser,
+//     getStats,
+//     banUserController,
+//     unbanUserController
+// }
+
 import { Request, Response } from "express";
 import { userService } from "./users.service";
 
+/**
+ * Create User
+ */
 const createUser = async (req: Request, res: Response) => {
     try {
-        const result = await userService.createUser(req.body)
-        res.status(201).json(result)
-    } catch (e) {
-        res.status(400).json({
-            error: 'student creation failed',
-            details: e
-        })
-    }
-}
+        const result = await userService.createUser(req.body);
 
-const getAllUser = async (req: Request, res: Response) => {
+        res.status(201).json({
+            success: true,
+            message: "User created successfully",
+            data: result,
+        });
+    } catch (error: any) {
+        res.status(400).json({
+            success: false,
+            message: error.message || "User creation failed",
+        });
+    }
+};
+
+/**
+ * Get All Users
+ */
+const getAllUser = async (_req: Request, res: Response) => {
     try {
-        const result = await userService.getAllUser(req.body)
-        res.status(201).json(result)
-    } catch (e) {
-        res.status(400).json({
-            error: 'student retrievtion failed',
-            details: e
-        })
-    }
-}
+        const result = await userService.getAllUser();
 
+        res.status(200).json({
+            success: true,
+            data: result,
+        });
+    } catch (error: any) {
+        res.status(400).json({
+            success: false,
+            message: error.message || "Users retrieval failed",
+        });
+    }
+};
+
+/**
+ * Get User By ID
+ */
 const getUserById = async (req: Request, res: Response) => {
     try {
         const userId = Number(req.params.id);
-        const result = await userService.getUserById(userId)
 
-        if (!result) {
-            return res.status(404).json({ error: "User not found" });
-        }
-        res.status(200).json(result)
-    } catch (e) {
-        res.status(400).json({
-            error: "User by id fetch failed",
-            details: e
-        })
+        const result = await userService.getUserById(userId);
+
+        res.status(200).json({
+            success: true,
+            data: result,
+        });
+    } catch (error: any) {
+        res.status(404).json({
+            success: false,
+            message: error.message || "User not found",
+        });
     }
-}
+};
 
-
+/**
+ * Update User
+ */
 const updateUser = async (req: Request, res: Response) => {
     try {
         const userId = Number(req.params.id);
 
-        const result = await userService.updateUser(req.body, userId)
-        res.status(200).json(result)
-    } catch (e) {
-        res.status(400).json({
-            error: "user update failed",
-            details: e
-        })
-    }
-}
+        const result = await userService.updateUser(req.body, userId);
 
+        res.status(200).json({
+            success: true,
+            message: "User updated successfully",
+            data: result,
+        });
+    } catch (error: any) {
+        res.status(400).json({
+            success: false,
+            message: error.message || "User update failed",
+        });
+    }
+};
+
+/**
+ * Delete User
+ */
 const deleteUser = async (req: Request, res: Response) => {
     try {
         const userId = Number(req.params.id);
-        const result = await userService.deleteUser(userId);
+
+        await userService.deleteUser(userId);
+
         res.status(200).json({
             success: true,
-            message: result.message
+            message: "User deleted successfully",
         });
-    } catch (err: any) {
+    } catch (error: any) {
         res.status(404).json({
             success: false,
-            message: err.message
+            message: error.message || "User not found",
         });
     }
 };
 
-const getStats = async (req: Request, res: Response) => {
+/**
+ * Admin Dashboard Stats
+ */
+const getStats = async (_req: Request, res: Response) => {
     try {
-        const userId = req.user?.id;
-        if (!userId)
-            return res.status(401).json({ success: false, message: "Unauthorized" });
+        const stats = await userService.getStats();
 
-        const stats = await userService.getStats(userId)
-
-        res.status(200).json({ success: true, data: stats });
-    } catch (e) {
-        const errorMessage = (e instanceof Error) ? e.message : "Stats fetched failed!"
+        res.status(200).json({
+            success: true,
+            data: stats,
+        });
+    } catch (error: any) {
         res.status(400).json({
-            error: errorMessage,
-            details: e
-        })
-    }
-}
-
-const banUserController = async (req: Request, res: Response) => {
-    const userId = Number(req.params.id);
-    try {
-        const user = await userService.banUser(userId);
-        res.json({ 
-            success: true, 
-            message: "User banned successfully",
-            user });
-    } catch (err) {
-        res.status(400).json({ 
             success: false,
-            message: "Error banning user", 
-            error: err });
+            message: error.message || "Stats fetch failed",
+        });
     }
 };
 
-const unbanUserController = async (req: Request, res: Response) => {
-    const userId = Number(req.params.id);
+/**
+ * Ban User
+ */
+const banUserController = async (req: Request, res: Response) => {
     try {
+        const userId = Number(req.params.id);
+
+        const user = await userService.banUser(userId);
+
+        res.status(200).json({
+            success: true,
+            message: "User banned successfully",
+            data: user,
+        });
+    } catch (error: any) {
+        res.status(400).json({
+            success: false,
+            message: error.message || "Error banning user",
+        });
+    }
+};
+
+/**
+ * Unban User
+ */
+const unbanUserController = async (req: Request, res: Response) => {
+    try {
+        const userId = Number(req.params.id);
+
         const user = await userService.unbanUser(userId);
-        res.json({ 
-            success: true, 
-            message: "User unbanned successfully", 
-            user });
-    } catch (err) {
-        res.status(400).json({ 
-            success: false, 
-            message: "Error unbanning user", 
-            error: err });
+
+        res.status(200).json({
+            success: true,
+            message: "User unbanned successfully",
+            data: user,
+        });
+    } catch (error: any) {
+        res.status(400).json({
+            success: false,
+            message: error.message || "Error unbanning user",
+        });
     }
 };
 
@@ -131,5 +311,5 @@ export const UserController = {
     deleteUser,
     getStats,
     banUserController,
-    unbanUserController
-}
+    unbanUserController,
+};
