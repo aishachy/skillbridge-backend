@@ -15,7 +15,7 @@ import { adminRouter } from "./modules/admin/admin.router.js";
 const app = express();
 
 app.use(
-    corsMiddleware({
+    cors({
         origin: [
             "http://localhost:3000",
             "https://skillbridge-frontend-indol.vercel.app"
@@ -23,6 +23,7 @@ app.use(
         credentials: true,
     })
 );
+
 
 app.use(express.json())
 app.use(cookieParser());
@@ -53,4 +54,8 @@ app.get("/", (req, res) => {
 })
 
 export default app;
+
+function cors(arg0: { origin: string[]; credentials: boolean; }): any {
+    throw new Error("Function not implemented.");
+}
 
