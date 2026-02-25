@@ -1,5 +1,5 @@
 import express from "express";
-import corsMiddleware from "cors"
+import cors from "cors"
 import cookieParser from "cookie-parser"
 import { tutorRouter } from "./modules/tutor/tutor.router.js";
 import { userRouter } from "./modules/users/users.router.js";
@@ -54,8 +54,4 @@ app.get("/", (req, res) => {
 })
 
 export default app;
-
-function cors(arg0: { origin: string[]; credentials: boolean; }): any {
-    throw new Error("Function not implemented.");
-}
 
