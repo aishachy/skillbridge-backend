@@ -72,7 +72,8 @@ const updateProfile = async (
 
 
 
-const getStats = async (studentId: number) => {
+const getStats = async (userId: number) => {
+    const studentId = userId
     // Total bookings
     const totalBookings = await prisma.bookings.count({
         where: { studentId },
