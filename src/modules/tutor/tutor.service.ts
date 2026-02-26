@@ -1,4 +1,4 @@
-import { Prisma, TutorProfiles } from "@prisma/client";
+import { Prisma, STATUS, TutorProfiles } from "@prisma/client";
 import { prisma } from "../../lib/prisma.js";
 
 interface UpdateTutorInput {
@@ -162,7 +162,7 @@ const updateTutor = async (tutorId: number, data: UpdateTutorInput) => {
   const result = await prisma.tutorProfiles.update({
     where: { id: tutorId },
     data: {
-      ...profileData, 
+      ...profileData,
       ...(categoriesUpdate ? { tutorCategories: categoriesUpdate } : {}),
     },
     include: {
@@ -241,6 +241,66 @@ const getStats = async (tutorId: number) => {
   }
 }
 
+const getTutorBookings = async (userId: number) => {
+  const tutorProfile = await prisma.tutorProfiles.findUnique({
+    where: { userId }
+  })
+
+  if (!tutorProfile) {
+    throw new Error("Tutor profile not found")
+  }
+
+  const bookings = await prisma.bookings.findMany({
+    where: {
+      tutorId: tutorProfile.id,
+    },
+    include: {
+      student: true,
+      category: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return bookings;
+};
+
+const updateBookingStatus = async (
+  bookingId: number,
+  status: STATUS,
+  userId: number
+) => {
+  const tutorProfile = await prisma.tutorProfiles.findUnique({
+    where: { userId },
+  });
+
+  if (!tutorProfile) {
+    throw new Error("Tutor profile not found");
+  }
+
+  const booking = await prisma.bookings.findUnique({
+    where: { id: bookingId },
+  });
+
+  if (!booking) {
+    throw new Error("Booking not found");
+  }
+
+  // security check
+  if (booking.tutorId !== tutorProfile.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const updated = await prisma.bookings.update({
+    where: { id: bookingId },
+    data: { status },
+  });
+
+  return updated;
+};
+
+
 
 export const tutorService = {
   createTutor,
@@ -250,5 +310,7 @@ export const tutorService = {
   updateTutorProfile,
   deleteTutor,
   getStats,
+  getTutorBookings,
+  updateBookingStatus
 }
 

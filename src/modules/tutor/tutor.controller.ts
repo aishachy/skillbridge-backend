@@ -1,6 +1,7 @@
 import e, { Request, Response } from "express"
 import { tutorService } from "./tutor.service"
 import { prisma } from "../../lib/prisma"
+import { bookingsService } from "../bookings/bookings.service"
 
 
 const createTutors = async (req: Request, res: Response) => {
@@ -165,6 +166,33 @@ const getStats = async (req: Request, res: Response) => {
     }
 };
 
+const getTutorBookings = async (req: Request, res: Response) => {
+    const userId = req.user!.id;
+
+    const result = await bookingsService.getTutorBookings(userId);
+
+    res.status(200).json({
+        success: true,
+        data: result,
+    });
+};
+
+const updateBookingStatus = async (req: Request, res: Response) => {
+    const userId = req.user!.id;
+    const bookingId = Number(req.params.id);
+    const { status } = req.body;
+
+    const result = await bookingsService.updateBooking(
+        bookingId,
+        status,
+        userId
+    );
+
+    res.status(200).json({
+        success: true,
+        data: result,
+    });
+};
 
 
 export const tutorController = {
@@ -174,5 +202,7 @@ export const tutorController = {
     updateTutor,
     updateTutorProfile,
     deleteTutor,
-    getStats
+    getStats,
+    getTutorBookings,
+    updateBookingStatus,
 }

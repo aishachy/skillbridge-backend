@@ -14,6 +14,10 @@ router.get('/student/:studentId', bookingController.getStudentBookings)
 
 router.get('/tutor/:tutorId', bookingController.getTutorBookings)
 
+router.get('/tutor/bookings', auth("TUTOR"), bookingController.getTutorBookings)
+
+router.put('/tutor/bookings/:id/status', auth("TUTOR"), bookingController.updateBooking)
+
 router.put('/status/:id', bookingController.updateBooking)
 
 router.put('/cancel/:id', bookingController.cancelBooking)

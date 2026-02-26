@@ -3,7 +3,7 @@ import { bookingsService } from "./bookings.service";
 
 const createBookings = async (req: Request, res: Response) => {
     try {
-        const studentId = req.user?.id;
+        const studentId = req.user!.id;
         const {tutorId, categoryId, availabilityId, price, startTime,endTime} = req.body
 
         const result = await bookingsService.createBookings({

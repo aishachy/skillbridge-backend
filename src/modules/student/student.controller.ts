@@ -1,86 +1,130 @@
 import { Request, Response } from "express";
 import { studentService } from "./student.service";
 
+
 const studentBookings = async (req: Request, res: Response) => {
   try {
-    const studentId = Number(req.params.studentId)
+    const studentId = (req.user as any)?.id;
+
+    if (!studentId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
     const result = await studentService.studentBookings(studentId);
+
     res.status(200).json({
       success: true,
-      data: result
-    })
+      data: result,
+    });
   } catch (e: any) {
-    console.error("dashboard fetched failed:", e)
+    console.error("Student bookings failed:", e);
     res.status(400).json({
-      error: "Overview fetch failed",
-      details: e.message
-    })
+      success: false,
+      message: "Bookings fetch failed",
+      error: e.message,
+    });
   }
-}
+};
+
+
 
 const getProfile = async (req: Request, res: Response) => {
   try {
-    const studentId = Number(req.params.studentId)
+    const studentId = (req.user as any)?.id;
+
+    if (!studentId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
 
     const profile = await studentService.getProfile(studentId);
-    if (!profile) return res.status(404).json({ success: false, message: "Student not found" });
+
+    if (!profile) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+
     res.status(200).json({
       success: true,
-      data: profile
+      data: profile,
     });
   } catch (err: any) {
     res.status(500).json({
       success: false,
       message: "Failed to fetch profile",
-      error: err.message
+      error: err.message,
     });
   }
 };
 
+
 const updateProfile = async (req: Request, res: Response) => {
   try {
-    const studentId = Number(req.params.studentId)
+    const studentId = (req.user as any)?.id;
+
     if (!studentId) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
     }
 
-    const updated = await studentService.updateProfile(studentId, req.body);
+    const updated = await studentService.updateProfile(
+      studentId,
+      req.body
+    );
 
     res.status(200).json({
       success: true,
       message: "Profile updated successfully",
-      data: updated
+      data: updated,
     });
   } catch (err: any) {
     res.status(500).json({
       success: false,
       message: "Profile update failed",
-      error: err.message
+      error: err.message,
     });
   }
 };
 
+
 const getStats = async (req: Request, res: Response) => {
   try {
-    const userId = (req.user as any)?.id; 
-    if (!userId)
-      return res.status(401).json({ success: false, message: "Unauthorized" });
+    const studentId = (req.user as any)?.id;
 
-    const stats = await studentService.getStats(userId)
+    if (!studentId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
 
-    res.status(200).json({ success: true, data: stats });
-  } catch (e) {
-    const errorMessage = (e instanceof Error) ? e.message : "Stats fetched failed!"
+    const stats = await studentService.getStats(studentId);
+
+    res.status(200).json({
+      success: true,
+      data: stats,
+    });
+  } catch (e: any) {
     res.status(400).json({
-      error: errorMessage,
-      details: e
-    })
+      success: false,
+      message: "Stats fetch failed",
+      error: e.message,
+    });
   }
-}
+};
 
 export const studentController = {
   studentBookings,
   getProfile,
   updateProfile,
-  getStats
-}
+  getStats,
+};

@@ -8,6 +8,8 @@ router.get('/bookings', auth("STUDENT"), studentController.studentBookings)
 
 router.get('/', auth("STUDENT"), studentController.getStats)
 
+router.get("/profile", auth("STUDENT"), studentController.getProfile);
+
 router.put('/profile', auth("STUDENT"), studentController.updateProfile)
 
 export const studentRouter = router;
