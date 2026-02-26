@@ -196,50 +196,53 @@ const deleteTutor = async (id: number) => {
   });
 };
 
-const getStats = async (tutorId: number) => {
-  const totalBookings = await prisma.bookings.count({ where: { tutorId } });
-  const completedSessions = await prisma.bookings.count({
-    where: { tutorId, status: "COMPLETED" }
-  });
-
-  const totalEarningResult = await prisma.bookings.aggregate({
-    where: { tutorId, status: "COMPLETED" },
-    _sum: { price: true }
-  });
-  const totalEarnings = totalEarningResult._sum.price ?? 0;
-
-  const upcomingSessions = await prisma.bookings.findMany({
-    where: {
-      tutorId,
-      status: "CONFIRMED"
-    },
-    include: {
-      student: { select: { name: true, email: true } },
-      category: { select: { subjectName: true } }
-    },
-    orderBy: { startTime: "asc" }
-  });
-
-  const pastSessions = await prisma.bookings.findMany({
-    where: {
-      tutorId,
-      status: "COMPLETED"
-    },
-    include: {
-      student: { select: { name: true, email: true } },
-      category: { select: { subjectName: true } }
-    },
-    orderBy: { startTime: "asc" }
-  });
-
-  return {
-    totalBookings,
-    completedSessions,
-    totalEarnings,
-    upcomingSessions,
-    pastSessions
+const getStats = async (userId?: number) => {
+  if (!userId) {
+    throw new Error("User ID is required for fetching tutor stats");
   }
-}
+
+  // Get tutor profile
+  const tutorProfile = await prisma.tutorProfiles.findUnique({
+    where: { userId },
+  });
+  if (!tutorProfile) {
+    throw new Error("Tutor profile not found");
+  }
+
+  const tutorId = tutorProfile.id;
+
+  // Total bookings
+  const totalBookings = await prisma.bookings.count({ where: { tutorId } });
+
+  // Completed sessions
+  const completedSessions = await prisma.bookings.count({
+    where: { tutorId, status: "COMPLETED" },
+  });
+
+  // Total earnings
+  const totalEarningsResult = await prisma.bookings.aggregate({
+    where: { tutorId, status: "COMPLETED" },
+    _sum: { price: true },
+  });
+  const totalEarnings = totalEarningsResult._sum.price ?? 0;
+
+  // Upcoming sessions
+  const upcomingSessions = await prisma.bookings.findMany({
+    where: { tutorId, status: "CONFIRMED" },
+    include: { student: { select: { name: true, email: true } }, category: { select: { subjectName: true } } },
+    orderBy: { startTime: "asc" },
+  });
+
+  // Past sessions
+  const pastSessions = await prisma.bookings.findMany({
+    where: { tutorId, status: "COMPLETED" },
+    include: { student: { select: { name: true, email: true } }, category: { select: { subjectName: true } } },
+    orderBy: { startTime: "desc" },
+  });
+
+  return { totalBookings, completedSessions, totalEarnings, upcomingSessions, pastSessions };
+};
+
 
 const getTutorBookings = async (userId: number) => {
   const tutorProfile = await prisma.tutorProfiles.findUnique({
