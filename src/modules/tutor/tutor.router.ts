@@ -4,18 +4,18 @@ import auth from "../../middleware/auth";
 
 const router = express.Router();
 
-router.get('/tutor', tutorController.getAllTutors)
+router.get('/', tutorController.getAllTutors)
 
-router.get('/tutor/dashboard', auth("TUTOR", "ADMIN"), tutorController.getStats)
+router.get('/dashboard', auth("TUTOR", "ADMIN"), tutorController.getStats)
 
-router.get('/tutor/:id', tutorController.getTutorById)
+router.get('/:id', tutorController.getTutorById)
 
-router.post('/tutor', auth("TUTOR", "ADMIN"), tutorController.createTutors)
+router.post('/', auth("TUTOR", "ADMIN"), tutorController.createTutors)
 
-router.put('/tutor/profile/:id', auth("TUTOR", "ADMIN"), tutorController.updateTutor)
+router.put('/profile/:id', auth("TUTOR", "ADMIN"), tutorController.updateTutor)
 
-router.put('/tutor/profile', auth("TUTOR"), tutorController.updateTutorProfile)
+router.put('/profile', auth("TUTOR"), tutorController.updateTutorProfile)
 
-router.delete('/tutor/:id', auth("ADMIN", "TUTOR"), tutorController.deleteTutor)
+router.delete('/:id', auth("ADMIN", "TUTOR"), tutorController.deleteTutor)
 
 export const tutorRouter = router;

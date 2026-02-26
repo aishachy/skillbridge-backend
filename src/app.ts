@@ -29,7 +29,7 @@ app.use(express.json())
 app.use(cookieParser());
 
 
-app.use('/api', tutorRouter);
+app.use('/api/tutor', tutorRouter);
 
 app.use('/admin', userRouter)
 
