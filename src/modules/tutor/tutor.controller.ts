@@ -65,7 +65,7 @@ const getAllTutors = async (req: Request, res: Response) => {
         });
     }
 };
-e
+
 const getTutorById = async (req: Request, res: Response) => {
     try {
         const tutorId = Number(req.params.id);
