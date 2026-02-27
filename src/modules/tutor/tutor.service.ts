@@ -93,9 +93,9 @@ const getAllTutors = async ({
             category: { select: { id: true, subjectName: true } },
           },
         },
-        // tutorCategories: {
-        //   include: { category: { select: { id: true, subjectName: true } } },
-        // },
+        tutorCategories: {
+          include: { category: { select: { id: true, subjectName: true } } },
+        },
       },
     });
 
