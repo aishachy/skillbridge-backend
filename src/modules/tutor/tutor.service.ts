@@ -102,7 +102,7 @@ const getAllTutors = async ({
     return tutors;
   } catch (err) {
     console.error("Error fetching tutors:", err);
-    throw err;
+    throw new Error("failed to fetch");
   }
 };
 
