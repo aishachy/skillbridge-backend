@@ -31,79 +31,10 @@ const createTutor = async (data: TutorProfiles) => {
   });
 }
 
-const getAllTutors = async ({
-  search,
-  isFeatured,
-  minRating,
-  categoryNames,
-}: {
-  search?: string | undefined;
-  isFeatured?: boolean | undefined;
-  minRating?: number;
-  categoryNames?: string[];
-}) => {
-  const andConditions: Prisma.TutorProfilesWhereInput[] = [];
-
-  // Search filter
-  if (search) {
-    andConditions.push({
-      OR: [
-        { bio: { contains: search, mode: "insensitive" } },
-        { user: { name: { contains: search, mode: "insensitive" } } },
-      ],
-    });
-  }
-
-  // Featured filter
-  if (typeof isFeatured === "boolean") {
-    andConditions.push({ isFeatured });
-  }
-
-  // Rating filter
-  if (minRating !== undefined) {
-    andConditions.push({ rating: { not: null, gte: minRating } });
-  }
-
-  // Category filter
-  if (categoryNames?.length) {
-    andConditions.push({
-      tutorCategories: {
-        some: { category: { subjectName: { in: categoryNames } } },
-      },
-    });
-  }
-
-  try {
-    const tutors = await prisma.tutorProfiles.findMany({
-      where: {
-        user: { role: "TUTOR" },
-        ...(andConditions.length > 0 && { AND: andConditions }),
-      },
-      include: {
-        user: { select: { id: true, name: true, email: true } },
-        reviews: {
-          include: {
-            student: { select: { id: true, name: true } },
-          },
-        },
-
-        bookings: {
-          include: {
-            student: { select: { id: true, name: true, email: true } },
-            category: { select: { id: true, subjectName: true } },
-          },
-        },
-        tutorCategories: {
-          include: { category: { select: { id: true, subjectName: true } } },
-        },
-      },
-    });
-
-    return tutors;
-  } catch (err) {
-    console.error("Error fetching tutors:", err);
-    throw new Error("failed to fetch");
-  }
+const getAllTutors = async () => {
+  const tutors = await prisma.tutorProfiles.findMany();
+  console.log("TUTORS:", tutors);
+  return tutors;
 };
 
 
