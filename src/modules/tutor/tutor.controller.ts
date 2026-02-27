@@ -56,13 +56,13 @@ const getAllTutors = async (req: Request, res: Response) => {
             data: result,
         });
 
-    } catch (err) {
+    } catch (err: any) {
         console.error("Tutors fetch failed:", err);
 
-        // return res.status(500).json({
-        //     success: false,
-        //     message: "Failed to fetch tutors",
-        // });
+        return res.status(500).json({
+            success: false,
+            message: err.message,
+        });
     }
 };
 
