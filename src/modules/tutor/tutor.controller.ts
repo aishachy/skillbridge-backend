@@ -61,7 +61,8 @@ const getAllTutors = async (req: Request, res: Response) => {
 
         return res.status(500).json({
             success: false,
-            message: err.message,
+            message: "failedto fetch!!!",
+            error: err.message
         });
     }
 };

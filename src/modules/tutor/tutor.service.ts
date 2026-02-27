@@ -61,7 +61,7 @@ const getAllTutors = async ({
 
   // Rating filter
   if (minRating !== undefined) {
-    andConditions.push({ rating: { not: null,  gte: minRating } });
+    andConditions.push({ rating: { not: null, gte: minRating } });
   }
 
   // Category filter
@@ -89,7 +89,7 @@ const getAllTutors = async ({
 
         bookings: {
           include: {
-            student: { select: { id: true, name: true } },
+            student: { select: { id: true, name: true, email: true } },
             category: { select: { id: true, subjectName: true } },
           },
         },
