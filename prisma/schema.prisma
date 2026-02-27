@@ -23,7 +23,7 @@ model Users {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   tutorProfiles TutorProfiles?
-  bookings      Bookings[]
+  // bookings      Bookings[]
   reviews       Reviews[]
 }
 
@@ -88,7 +88,7 @@ model Bookings {
 
   availabilityId Int?
   availability   TutorAvailability? @relation(fields: [availabilityId], references: [id])
-  student        Users              @relation(fields: [studentId], references: [id])
+  // student        Users              @relation(fields: [studentId], references: [id])
   tutor          TutorProfiles      @relation(fields: [tutorId], references: [id])
   category       Categories         @relation(fields: [categoryId], references: [id])
   reviews        Reviews?
