@@ -23,7 +23,7 @@ model Users {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   tutorProfiles TutorProfiles?
-  // bookings      Bookings[]
+  bookings      Bookings[]
   reviews       Reviews[]
 }
 
@@ -42,7 +42,7 @@ model TutorProfiles {
 
   userId              Int                 @unique
   user                Users               @relation(fields: [userId], references: [id])
-  category            Categories[]        @relation("TutorCategories")
+  // category            Categories[]        @relation("TutorCategories")
   reviews             Reviews[]
   bookings            Bookings[]
   tutorAvailabilities TutorAvailability[]
@@ -56,7 +56,7 @@ model Categories {
   subjectName String
   description String
 
-  tutors          TutorProfiles[]   @relation("TutorCategories")
+  // tutors          TutorProfiles[]   @relation("TutorCategories")
   bookings        Bookings[]
   tutorCategories TutorCategories[]
 
@@ -88,7 +88,7 @@ model Bookings {
 
   availabilityId Int?
   availability   TutorAvailability? @relation(fields: [availabilityId], references: [id])
-  // student        Users              @relation(fields: [studentId], references: [id])
+  student        Users              @relation(fields: [studentId], references: [id])
   tutor          TutorProfiles      @relation(fields: [tutorId], references: [id])
   category       Categories         @relation(fields: [categoryId], references: [id])
   reviews        Reviews?
