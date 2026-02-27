@@ -37,8 +37,8 @@ const getAllTutors = async ({
   minRating,
   categoryNames,
 }: {
-  search: string | undefined;
-  isFeatured: boolean | undefined;
+  search?: string | undefined;
+  isFeatured?: boolean | undefined;
   minRating?: number;
   categoryNames?: string[];
 }) => {
