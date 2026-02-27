@@ -196,20 +196,8 @@ const deleteTutor = async (id: number) => {
   });
 };
 
-const getStats = async (userId?: number) => {
-  if (!userId) {
-    throw new Error("User ID is required for fetching tutor stats");
-  }
+const getStats = async (tutorId: number) => {
 
-  // Get tutor profile
-  const tutorProfile = await prisma.tutorProfiles.findUnique({
-    where: { userId },
-  });
-  if (!tutorProfile) {
-    throw new Error("Tutor profile not found");
-  }
-
-  const tutorId = tutorProfile.id;
 
   // Total bookings
   const totalBookings = await prisma.bookings.count({ where: { tutorId } });
