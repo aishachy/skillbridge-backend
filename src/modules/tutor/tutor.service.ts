@@ -61,7 +61,7 @@ const getAllTutors = async ({
 
   // Rating filter
   if (minRating !== undefined) {
-    andConditions.push({ rating: { gte: minRating } });
+    andConditions.push({ rating: { not: null,  gte: minRating } });
   }
 
   // Category filter
@@ -76,8 +76,8 @@ const getAllTutors = async ({
   try {
     const tutors = await prisma.tutorProfiles.findMany({
       where: {
-        AND: andConditions,
         user: { role: "TUTOR" },
+        ...(andConditions.length > 0 && { AND: andConditions }),
       },
       include: {
         user: { select: { id: true, name: true, email: true } },
@@ -93,9 +93,9 @@ const getAllTutors = async ({
             category: { select: { id: true, subjectName: true } },
           },
         },
-        tutorCategories: {
-          include: { category: { select: { id: true, subjectName: true } } },
-        },
+        // tutorCategories: {
+        //   include: { category: { select: { id: true, subjectName: true } } },
+        // },
       },
     });
 
