@@ -22,7 +22,7 @@ model Users {
   isBanned      Boolean        @default(false)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  tutorProfiles TutorProfiles?
+  tutor TutorProfiles?
   bookings      Bookings[]
   reviews       Reviews[]
 }
