@@ -189,7 +189,6 @@ const createUser = async (data: Users) => {
 const getAllUser = async () => {
     const users = await prisma.users.findMany({
         include: {
-            tutorProfiles: true,
             bookings: true,
             reviews: true,
         },
