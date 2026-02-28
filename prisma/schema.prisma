@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,52 +7,50 @@ datasource db {
 }
 
 model Users {
-  id            Int            @id @default(autoincrement())
-  name          String
-  email         String         @unique
-  password      String
-  role          ROLE           @default(STUDENT)
-  phone         String?
-  isBanned      Boolean        @default(false)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  tutor TutorProfiles?
-  bookings      Bookings[]
-  reviews       Reviews[]
+  id        Int            @id @default(autoincrement())
+  name      String
+  email     String         @unique
+  password  String
+  role      ROLE           @default(STUDENT)
+  phone     String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  isBanned  Boolean        @default(false)
+  bookings  Bookings[]
+  reviews   Reviews[]
+  tutor     TutorProfiles?
 }
 
 model TutorProfiles {
-  id          Int      @id @default(autoincrement())
-  bio         String?
-  education   String?
-  experience  String?
-  perHourRate String?
-  location    String?
-  rating      Float?   @default(0)
-  isActive    Boolean  @default(true)
-  isFeatured  Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
+  id                  Int                 @id @default(autoincrement())
+  bio                 String?
+  education           String?
+  experience          String?
+  perHourRate         String?
+  location            String?
+  rating              Float?              @default(0)
+  isActive            Boolean             @default(true)
+  isFeatured          Boolean             @default(false)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
   userId              Int                 @unique
-  user                Users               @relation(fields: [userId], references: [id])
-  // category            Categories[]        @relation("TutorCategories")
-  reviews             Reviews[]
   bookings            Bookings[]
+  reviews             Reviews[]
   tutorAvailabilities TutorAvailability[]
+  user                Users               @relation(fields: [userId], references: [id])
   tutorCategories     TutorCategories[]
+  categories          Categories[]        @relation("TutorCategories")
 
   @@map("tutorProfiles")
 }
 
 model Categories {
-  id          Int    @id @default(autoincrement())
-  subjectName String
-  description String
-
-  // tutors          TutorProfiles[]   @relation("TutorCategories")
+  id              Int               @id @default(autoincrement())
+  subjectName     String
+  description     String
   bookings        Bookings[]
   tutorCategories TutorCategories[]
+  tutorProfiles   TutorProfiles[]   @relation("TutorCategories")
 
   @@map("categories")
 }
@@ -66,63 +58,63 @@ model Categories {
 model TutorCategories {
   tutorId    Int
   categoryId Int
-
-  tutor    TutorProfiles @relation(fields: [tutorId], references: [id])
-  category Categories    @relation(fields: [categoryId], references: [id])
+  category   Categories    @relation(fields: [categoryId], references: [id])
+  tutor      TutorProfiles @relation(fields: [tutorId], references: [id])
 
   @@id([tutorId, categoryId])
   @@map("tutor_categories")
 }
 
 model Bookings {
-  id         Int      @id @default(autoincrement())
-  studentId  Int
-  tutorId    Int
-  categoryId Int
-  startTime  DateTime
-  endTime    DateTime
-  status     STATUS   @default(PENDING)
-  price      Float?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  availabilityId Int?
-  availability   TutorAvailability? @relation(fields: [availabilityId], references: [id])
-  student        Users              @relation(fields: [studentId], references: [id])
-  tutor          TutorProfiles      @relation(fields: [tutorId], references: [id])
-  category       Categories         @relation(fields: [categoryId], references: [id])
-  reviews        Reviews?
+  id                Int                 @id @default(autoincrement())
+  categoryId        Int
+  startTime         DateTime
+  endTime           DateTime
+  price             Float?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  status            STATUS              @default(PENDING)
+  studentId         Int
+  tutorId           Int
+  category          Categories          @relation(fields: [categoryId], references: [id])
+  student           Users               @relation(fields: [studentId], references: [id])
+  tutor             TutorProfiles       @relation(fields: [tutorId], references: [id])
+  reviews           Reviews?
+  TutorAvailability TutorAvailability[]
 }
 
 model Reviews {
-  id        Int      @id @default(autoincrement())
-  studentId Int
-  tutorId   Int
-  bookingId Int
+  id        Int           @id @default(autoincrement())
   rating    String
   comment   String?
-  createdAt DateTime @default(now())
-
-  student Users         @relation(fields: [studentId], references: [id])
-  tutor   TutorProfiles @relation(fields: [tutorId], references: [id])
-  booking Bookings      @relation(fields: [bookingId], references: [id])
-
-  @@unique([bookingId])
+  createdAt DateTime      @default(now())
+  studentId Int
+  tutorId   Int
+  bookingId Int           @unique
+  booking   Bookings      @relation(fields: [bookingId], references: [id])
+  student   Users         @relation(fields: [studentId], references: [id])
+  tutor     TutorProfiles @relation(fields: [tutorId], references: [id])
 }
 
 model TutorAvailability {
   id        Int                @id @default(autoincrement())
-  tutorId   Int
   startTime DateTime
   endTime   DateTime
-  status    AvailabilityStatus @default(AVAILABLE)
+  tutorId   Int
+  bookingId Int?
   createdAt DateTime           @default(now())
+  status    AvailabilityStatus @default(AVAILABLE)
   updatedAt DateTime           @updatedAt
-
-  tutor    TutorProfiles @relation(fields: [tutorId], references: [id])
-  bookings Bookings[]
+  Bookings  Bookings?          @relation(fields: [bookingId], references: [id])
+  tutor     TutorProfiles      @relation(fields: [tutorId], references: [id])
 
   @@unique([tutorId, startTime, endTime])
+}
+
+model playing_with_neon {
+  id    Int    @id @default(autoincrement())
+  name  String
+  value Float? @db.Real
 }
 
 enum AvailabilityStatus {
